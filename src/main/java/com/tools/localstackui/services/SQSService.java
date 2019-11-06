@@ -23,7 +23,6 @@ public class SQSService {
   @Autowired
   AmazonSNS amazonSNS;
 
-  @Value("${aws.sqs.name}")
   private String sqsName;
 
   public String createQueue(String queueName) {
