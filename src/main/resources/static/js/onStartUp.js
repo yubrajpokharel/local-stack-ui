@@ -20,7 +20,7 @@ $(document).ready(function () {
       $.each(result, (function (index, element) {
         if (queueOrTopic == "queue") {
           listElement = listElement + "<li class='list-group-item'>"
-              + functionGenerateLink(url, element) +
+              + functionGenerateLinkForQueue(url, element) +
               "&nbsp;&nbsp;&nbsp;<span data-type = \"queue\"data-name ="
               + element
               + " class=\"badge badge-danger delete\">Delete</span</li>";
@@ -54,6 +54,12 @@ $(document).ready(function () {
     }).fail(function (jqXHR, textStatus) {
       alert("Request failed: " + textStatus);
     });
+  }
+
+  function functionGenerateLinkForQueue(prePender, path) {
+    var sqsName = path.split("/").pop();
+    return "<a href=" + "sqs-message" + "/" + sqsName + " title=" + sqsName + ">"
+        + sqsName + "</a>";
   }
 
   function functionGenerateLink(prePender, path) {

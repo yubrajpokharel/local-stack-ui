@@ -52,6 +52,14 @@ public class SQSService {
     return sqsMessages;
   }
 
+  public List<Message> getSqsMessages(String queueName) {
+    ReceiveMessageRequest receiveMessageRequest = new ReceiveMessageRequest(queueName)
+        .withMaxNumberOfMessages(10);
+    List<Message> sqsMessages = amazonSQS.receiveMessage(receiveMessageRequest).getMessages();
+
+    return sqsMessages;
+  }
+
   public String delete(String queueUrl) {
     amazonSQS.deleteQueue(queueUrl);
     return "success";
