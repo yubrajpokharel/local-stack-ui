@@ -32,7 +32,7 @@
                             <ul class='list-group'>
                                 <c:if test="${not empty messages}">
                                     <c:forEach items="${messages}" var="message">
-                                        <li class='list-group-item'><span
+                                        <li class='list-group-item' style="word-break: break-word;"><span
                                                 class="badge badge-success">${message.messageId}</span> -> ${message.body}
                                         </li>
                                     </c:forEach>
