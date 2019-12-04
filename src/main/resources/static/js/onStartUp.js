@@ -23,13 +23,13 @@ $(document).ready(function () {
               + functionGenerateLinkForQueue(url, element) +
               "&nbsp;&nbsp;&nbsp;<span data-type = \"queue\"data-name ="
               + element
-              + " class=\"badge badge-danger delete\">Delete</span</li>";
+              + " class=\"badge badge-danger delete\">Delete</span></li>";
         } else {
           listElement = listElement + "<li class='list-group-item'>"
               + functionGenerateLink(url, element) +
               "&nbsp;&nbsp;&nbsp;<span data-type = \"topic\"data-name ="
               + element
-              + " class=\"badge badge-danger delete\">Delete</span</li>";
+              + " class=\"badge badge-danger delete\">Delete</span></li>";
         }
       }));
       listElement = listElement + "</ul>";
@@ -74,6 +74,7 @@ $(document).ready(function () {
     if (topicName.length != 0) {
       var endPointToCreateTopic = "/sns/createTopic/" + topicName;
       create(endPointToCreateTopic);
+      $('#topicName').val("");
     } else {
       alert("topic name cannot be empty");
     }
@@ -84,6 +85,7 @@ $(document).ready(function () {
     if (topicName.length != 0) {
       var endPointToCreateQueue = "/sqs/createQueue/" + queueName;
       create(endPointToCreateQueue);
+      $('#queueName').val("");
     } else {
       alert("queue name cannot be empty");
     }

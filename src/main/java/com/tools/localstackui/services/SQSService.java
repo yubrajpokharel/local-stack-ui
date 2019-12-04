@@ -4,6 +4,7 @@ import static java.util.Arrays.asList;
 
 import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sns.model.SubscribeResult;
+import com.amazonaws.services.sns.model.UnsubscribeResult;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.model.Message;
 import com.amazonaws.services.sqs.model.QueueAttributeName;
@@ -41,6 +42,11 @@ public class SQSService {
     String sqsQueueArn = (String) sqsAttrs.get(QueueAttributeName.QueueArn.toString());
     SubscribeResult subscribeResult = amazonSNS.subscribe(topicArn, "sqs", sqsQueueArn);
     return subscribeResult.getSubscriptionArn();
+  }
+
+  public String unSubscribeQueueToTopic(String subscriptionArn) {
+    UnsubscribeResult unSubscribeResult = amazonSNS.unsubscribe(subscriptionArn);
+    return "Successfully removed subscription";
   }
 
   public List<Message> getSqsMessages() {

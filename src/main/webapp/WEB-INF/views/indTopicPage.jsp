@@ -29,19 +29,34 @@
                 </div>
                 <div class="col-lg-12">
                     <h5>Subscriptions</h5>
-                    <ul class='list-group'>
+                    <table class="table table-striped" style="font-size: 0.8em">
+                        <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">ARN</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
                         <c:if test="${not empty subscriptions}">
-                            <c:forEach items="${subscriptions}" var="subscription">
-                                <li class='list-group-item'>${subscription}</li>
+                            <c:forEach items="${subscriptions}" var="subscription" varStatus="loop">
+                                <tr>
+                                    <th scope="row">${loop.index}</th>
+                                    <td><b>${subscription.key}</b></td>
+                                    <td><button id="${subscription.key}" data-id="${subscription.key}" data-name="${subscription.value}" type="button" class="btn btn-danger btn-sm removeSubsription">Remove</button>
+                                    </td>
+                                </tr>
                             </c:forEach>
                         </c:if>
-                    </ul>
+                        </tbody>
+                    </table>
+
                 </div>
                 <hr style="padding-top: 10em"/>
                 <div class="col-lg-12">
                     <h5 class="h5">Send Message to topic</h5>
                     <div class="form-group">
-                        <textarea class="form-control" id="messageBox" rows="3"></textarea>
+                        <textarea class="form-control" id="messageBox" rows="6" style="font-size: 0.8em"></textarea>
                         <input type="hidden" id="topicArn" value="${topicArn}">
                     </div>
                 </div>
@@ -84,6 +99,24 @@
         alert("Request failed: " + textStatus);
       });
     }
+
+  //  remove the subscription
+    $('.removeSubsription').click(function(){
+      var name = $(this).data("name");
+      var id = $(this).data("id");
+      var url = "/unsubscribe/" + name;
+      $.ajax({
+        url: url,
+        method: "DELETE",
+        contentType: "application/json; charset=utf-8",
+      }).done(function (msg) {
+        //$(this).hide();
+        alert(msg);
+        location.reload();
+      }).fail(function (jqXHR, textStatus) {
+        alert("Request failed: " + textStatus);
+      });
+    });
   });
 </script>
 </body>

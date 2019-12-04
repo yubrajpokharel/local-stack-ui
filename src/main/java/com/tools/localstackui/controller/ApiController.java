@@ -11,6 +11,7 @@ import com.tools.localstackui.services.SNSService;
 import com.tools.localstackui.services.SQSService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,6 +26,8 @@ public class ApiController {
 
   @Autowired
   SNSService snsService;
+
+  private static final String LOCAL_SQS_URL = "http://localhost:4576/queue/";
 
 
   /*****************************************************
@@ -73,12 +76,6 @@ public class ApiController {
     return snsService.sentMessage(topicArn, message);
   }
 
-  @PostMapping(value = "/subscribe/{queueUrl}/{topicArn}")
-  public String subscribe(@PathVariable("queueUrl") String queueUrl,
-      @PathVariable("topicArn") String topicArn) {
-    return sqsService.subscribeQueueToTopic("http://localhost:4576/queue/"+queueUrl, topicArn);
-  }
-
   @PostMapping(value = "/deleteTopic/{topicArn}")
   public String delete(@PathVariable("topicArn") String topicArn) {
     return snsService.deleteTopic(topicArn);
@@ -101,7 +98,17 @@ public class ApiController {
 
   @PostMapping(value = "/deleteQueue/{queueUrl}")
   public String deleteQueue(@PathVariable("queueUrl") String queueUrl) {
-    return sqsService.delete("http://localhost:4576/queue/"+queueUrl);
+    return sqsService.delete(LOCAL_SQS_URL+queueUrl);
   }
 
+  @PostMapping(value = "/subscribe/{queueUrl}/{topicArn}")
+  public String subscribe(@PathVariable("queueUrl") String queueUrl,
+      @PathVariable("topicArn") String topicArn) {
+    return sqsService.subscribeQueueToTopic(LOCAL_SQS_URL+queueUrl, topicArn);
+  }
+
+  @DeleteMapping(value = "/unsubscribe/{subscriptionArn}")
+  public String unsubscribe(@PathVariable("subscriptionArn") String subscriptionArn) {
+    return sqsService.unSubscribeQueueToTopic(subscriptionArn);
+  }
 }

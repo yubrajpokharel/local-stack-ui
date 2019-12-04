@@ -1,6 +1,7 @@
 package com.tools.localstackui.services;
 
 import static java.util.stream.Collectors.toList;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sns.model.ListSubscriptionsResult;
@@ -9,10 +10,13 @@ import com.amazonaws.services.sns.model.PublishRequest;
 import com.amazonaws.services.sns.model.PublishResult;
 import com.amazonaws.services.sns.model.Subscription;
 import com.amazonaws.services.sns.model.Topic;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 @Service
 public class SNSService {
@@ -35,11 +39,15 @@ public class SNSService {
     return list.getTopics().stream().map(Topic::getTopicArn).collect(toList());
   }
 
-  public List<String> getSubscriptionByTopicName(String topicName){
+  public Map<String, String> getSubscriptionByTopicName(String topicName){
+    Map<String, String> response = new HashMap<>();
     List<Subscription> subscriptionList = amazonSNS.listSubscriptionsByTopic(topicName).getSubscriptions();
-    return amazonSNS.listSubscriptionsByTopic(topicName).getSubscriptions()
-        .stream()
-        .map(x -> x.getEndpoint()).collect(toList());
+    if (!isEmpty(subscriptionList)) {
+      for(Subscription subscription: subscriptionList){
+        response.put(subscription.getEndpoint(), subscription.getSubscriptionArn());
+      }
+    }
+    return response;
   }
 
   public String sentMessage(String topicArn, String msg){

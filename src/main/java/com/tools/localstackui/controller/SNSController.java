@@ -4,6 +4,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import com.tools.localstackui.services.SNSService;
 import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,7 +19,7 @@ public class SNSController {
 
   @GetMapping(value = "/sns-topics/{topicArn}", produces = APPLICATION_JSON_VALUE)
   public String getIndividualTopic(@PathVariable("topicArn") String topicArn, Model model) {
-    List<String> subscriptions =  snsService.getSubscriptionByTopicName(topicArn);
+    Map<String, String> subscriptions =  snsService.getSubscriptionByTopicName(topicArn);
     model.addAttribute("snsTopic", topicArn);
     model.addAttribute("subscriptions", subscriptions);
     return "indTopicPage";

@@ -29,15 +29,29 @@
                         </div>
                         <div class="col-lg-12" style="padding-top: 2em">
                             <h5>Messages</h5>
-                            <ul class='list-group'>
-                                <c:if test="${not empty messages}">
-                                    <c:forEach items="${messages}" var="message">
-                                        <li class='list-group-item' style="word-break: break-word;"><span
-                                                class="badge badge-success">${message.messageId}</span> -> ${message.body}
-                                        </li>
-                                    </c:forEach>
-                                </c:if>
-                            </ul>
+
+                            <table class="table table-striped" style="font-size: 0.8em">
+                                <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">ID</th>
+                                    <th scope="col">Message</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <ul class='list-group'>
+                                    <c:if test="${not empty messages}">
+                                        <c:forEach items="${messages}" var="message" varStatus="loop">
+                                        <tr>
+                                            <th scope="row">${loop.index}</th>
+                                            <td><b>${message.messageId}</b></td>
+                                            <td>${message.body}</td>
+                                        </tr>
+                                        </c:forEach>
+                                    </c:if>
+                                </ul>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
