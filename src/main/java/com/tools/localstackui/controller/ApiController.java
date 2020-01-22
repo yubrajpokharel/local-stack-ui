@@ -6,7 +6,9 @@ import static java.util.stream.Collectors.toList;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.util.CollectionUtils.isEmpty;
 
+import com.amazonaws.services.s3.model.Bucket;
 import com.amazonaws.services.sqs.model.Message;
+import com.tools.localstackui.services.S3Service;
 import com.tools.localstackui.services.SNSService;
 import com.tools.localstackui.services.SQSService;
 import java.util.List;
@@ -26,6 +28,9 @@ public class ApiController {
 
   @Autowired
   SNSService snsService;
+
+  @Autowired
+  S3Service s3Service;
 
   private static final String LOCAL_SQS_URL = "http://localhost:4576/queue/";
 
@@ -110,5 +115,24 @@ public class ApiController {
   @DeleteMapping(value = "/unsubscribe/{subscriptionArn}")
   public String unsubscribe(@PathVariable("subscriptionArn") String subscriptionArn) {
     return sqsService.unSubscribeQueueToTopic(subscriptionArn);
+  }
+
+  /*****************************************************
+   * S3 Starts
+   *****************************************************/
+
+  @GetMapping(value = "/s3-buckets", produces = APPLICATION_JSON_VALUE)
+  public List<Bucket> getS3Buckets() {
+    return s3Service.getListofBuckets();
+  }
+
+  @PostMapping(value = "/s3-buckets/create/{bucketName}", produces = APPLICATION_JSON_VALUE)
+  public Bucket getS3Buckets(@PathVariable("bucketName") String bucketName) {
+    return s3Service.createS3Bucket(bucketName);
+  }
+
+  @PostMapping(value = "/s3-buckets/delete/{bucketName}")
+  public String deleteBucket(@PathVariable("bucketName") String bucketName) {
+    return s3Service.deleteBucket(bucketName);
   }
 }

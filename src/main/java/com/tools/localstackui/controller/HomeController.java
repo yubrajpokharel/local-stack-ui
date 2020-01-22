@@ -14,4 +14,15 @@ public class HomeController {
     return "index";
   }
 
+  @RequestMapping(value = "/messaging", method = GET)
+  public String messaging(Model model) {
+    return "messaging";
+  }
+
+  @RequestMapping(value = "/s3", method = GET)
+  public String s3s(Model model) {
+    return "s3s";
+  }
+
+
 }

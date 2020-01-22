@@ -35,7 +35,7 @@ $(document).ready(function () {
       listElement = listElement + "</ul>";
       snsList.html(listElement);
     }).fail(function (jqXHR, textStatus) {
-      alert("Request failed: " + textStatus);
+      console.log("Request failed: " + textStatus);
     });
   }
 
@@ -139,7 +139,7 @@ $(document).ready(function () {
       populateSelectOptions("/sns-topics", snsOptions);
       populateSelectOptions("/sqs", sqsOptions);
     }).fail(function (jqXHR, textStatus) {
-      alert("Request failed: " + textStatus);
+      console.log("Request failed: " + textStatus);
     });
   });
 
