@@ -4,6 +4,7 @@ import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder.EndpointConfiguration;
+import com.amazonaws.http.apache.client.impl.SdkHttpClient;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
@@ -50,10 +51,13 @@ public class AWSConfiguration {
 
   @Bean
   public AmazonS3 amazonS3() {
-    return AmazonS3ClientBuilder.standard()
+    return AmazonS3ClientBuilder
+        .standard()
         .withCredentials(new AWSStaticCredentialsProvider(awsCredentials()))
         .withEndpointConfiguration(
             new EndpointConfiguration("http://localhost:4572", region)
-        ).build();
+        )
+        .withPathStyleAccessEnabled(true)
+        .build();
   }
 }

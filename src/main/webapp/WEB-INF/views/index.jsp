@@ -26,7 +26,7 @@
             <span class="badge badge-primary">SQS</span>
         </div>
         <div class="col-lg-4 col-md-4 col-6">
-            <a href="#" class="mb-4 h-100">
+            <a href="/s3" class="mb-4 h-100">
                 <img style="height: 150px; margin: 10px" class="img-fluid img-thumbnail" alt="S3"  src="resources/images/s3.png"> <br>
             </a>
             <span class="badge badge-primary">S3</span>
