@@ -17,12 +17,18 @@
     </head>
     <body>
         <div class="container">
+            <a class="mt-5" href="/" title="home">
+                <img style="height: 20px; margin: 10px" class="img-fluid" alt="SNS" src="/resources/images/awstool.png" />
+                &nbsp;Home</a>
+            <h2 class="font-weight-bold text-center text-lg-left mt-4 mb-0">SQS</h2>
+            <hr class="mt-2 mb-5">
+
             <div class="row">
                 <div class="col-lg-12">
                     <div class="row">
                         <div class="col-lg-5">
-                            <img alt="SQS" class="img-fluid"
-                                 src="https://panoply.io/images/integration-logos/sqs.svg">
+                            <img style="height: 200px; margin: 10px" alt="SQS" class="img-fluid img-thumbnail"
+                                 src="/resources/images/sqs.png">
                         </div>
                         <div class="col-lg-7" style="margin-top: 50px">
                             <h4 class="align-middle">${sqsQueue}</h4>

@@ -14,4 +14,8 @@ public class HomeController {
     return "index";
   }
 
+  @RequestMapping(value = "/messaging", method = GET)
+  public String messaging(Model model) {
+    return "messaging";
+  }
 }
