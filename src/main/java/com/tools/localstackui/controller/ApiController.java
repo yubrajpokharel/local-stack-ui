@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 public class ApiController {
@@ -33,6 +35,7 @@ public class ApiController {
   S3Service s3Service;
 
   private static final String LOCAL_SQS_URL = "http://localhost:4576/queue/";
+  private static final String LOCAL_S3_URL = "http://localhost:4572/";
 
 
   /*****************************************************
@@ -103,13 +106,13 @@ public class ApiController {
 
   @PostMapping(value = "/deleteQueue/{queueUrl}")
   public String deleteQueue(@PathVariable("queueUrl") String queueUrl) {
-    return sqsService.delete(LOCAL_SQS_URL+queueUrl);
+    return sqsService.delete(LOCAL_SQS_URL + queueUrl);
   }
 
   @PostMapping(value = "/subscribe/{queueUrl}/{topicArn}")
   public String subscribe(@PathVariable("queueUrl") String queueUrl,
       @PathVariable("topicArn") String topicArn) {
-    return sqsService.subscribeQueueToTopic(LOCAL_SQS_URL+queueUrl, topicArn);
+    return sqsService.subscribeQueueToTopic(LOCAL_SQS_URL + queueUrl, topicArn);
   }
 
   @DeleteMapping(value = "/unsubscribe/{subscriptionArn}")
@@ -134,5 +137,25 @@ public class ApiController {
   @PostMapping(value = "/s3-buckets/delete/{bucketName}")
   public String deleteBucket(@PathVariable("bucketName") String bucketName) {
     return s3Service.deleteBucket(bucketName);
+  }
+
+  @GetMapping(value = "/s3-buckets/get/{bucketName}")
+  public List<String> getBucketContent(@PathVariable("bucketName") String bucketName) {
+    return s3Service.listInternal(bucketName)
+        .stream().map(x -> x.getKey())
+        .collect(toList());
+  }
+
+  @PostMapping("/s3-buckets/uploadFile/{bucketName}")
+  public String uploadFile(@RequestPart(value = "file") MultipartFile file,
+      @PathVariable(value = "bucketName") String bucketName) {
+    return this.s3Service.uploadFile(file, bucketName);
+  }
+
+  @DeleteMapping("/s3-buckets/deleteFile/{bucketName}/{fileName}")
+  public String deleteFile(@PathVariable(value = "bucketName") String bucketName,
+      @PathVariable(value = "fileName") String fileName) {
+    return this.s3Service
+        .deleteFileFromS3Bucket(LOCAL_S3_URL + bucketName + "/" + fileName, bucketName);
   }
 }
