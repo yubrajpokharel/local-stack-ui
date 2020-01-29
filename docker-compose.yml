@@ -1,0 +1,17 @@
+version: '3.2'
+services:
+  localstack:
+    image: localstack/localstack:latest
+    container_name: localstack
+    ports:
+      - '4567-4597:4567-4597'
+    environment:
+      - SERVICES=sns,sqs,s3
+      - DEBUG=1
+      - DATA_DIR=/tmp/localstack/data
+      - HOSTNAME=localstack
+      - DEFAULT_REGION=us-west-2
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - "${TMPDIR:-/tmp/localstack}:/tmp/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
