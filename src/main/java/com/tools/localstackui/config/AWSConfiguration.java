@@ -36,7 +36,7 @@ public class AWSConfiguration {
     return AmazonSQSClientBuilder.standard()
         .withCredentials(new AWSStaticCredentialsProvider(awsCredentials()))
         .withEndpointConfiguration(
-            new EndpointConfiguration("http://localhost:4576", region))
+            new EndpointConfiguration("http://localhost:4566/_aws/sqs", region))
         .build();
   }
 
@@ -45,7 +45,7 @@ public class AWSConfiguration {
     return AmazonSNSClientBuilder.standard()
         .withCredentials(new AWSStaticCredentialsProvider(awsCredentials()))
         .withEndpointConfiguration(
-            new EndpointConfiguration("http://localhost:4575", region))
+            new EndpointConfiguration("http://localhost:4566/_aws/sns", region))
         .build();
   }
 
@@ -55,7 +55,7 @@ public class AWSConfiguration {
         .standard()
         .withCredentials(new AWSStaticCredentialsProvider(awsCredentials()))
         .withEndpointConfiguration(
-            new EndpointConfiguration("http://localhost:4572", region)
+            new EndpointConfiguration("http://localhost:4566/_aws/s3", region)
         )
         .withPathStyleAccessEnabled(true)
         .build();

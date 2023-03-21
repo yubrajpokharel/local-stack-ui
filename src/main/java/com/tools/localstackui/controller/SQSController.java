@@ -21,7 +21,7 @@ public class SQSController {
   @RequestMapping(value = "/sqs-message/{queueUrl}", method = GET)
   public String getMessage(@PathVariable("queueUrl") String queueUrl, Model model) {
     System.out.println(queueUrl);
-    List<Message> messages =  sqsService.getSqsMessages("http://localhost:4576/queue/"+queueUrl);
+    List<Message> messages =  sqsService.getSqsMessages("http://localhost:4566/_aws/sqs/"+queueUrl);
     messages.forEach(System.out::println);
     model.addAttribute("sqsQueue", queueUrl);
     model.addAttribute("messages", messages);
