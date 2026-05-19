@@ -14,3 +14,8 @@ services:
     volumes:
       - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
       - "/var/run/docker.sock:/var/run/docker.sock"
+  redis:
+    container_name: redis_main
+    image: redis:7.2-alpine
+    ports:
+      - "127.0.0.1:6379:6379"
