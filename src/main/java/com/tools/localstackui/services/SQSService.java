@@ -9,6 +9,7 @@ import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.model.Message;
 import com.amazonaws.services.sqs.model.QueueAttributeName;
 import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
+import com.amazonaws.services.sqs.model.SendMessageResult;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +53,8 @@ public class SQSService {
   public List<Message> getSqsMessages() {
     ReceiveMessageRequest receiveMessageRequest = new ReceiveMessageRequest(sqsName)
         .withWaitTimeSeconds(10)
-        .withMaxNumberOfMessages(10);
+        .withMaxNumberOfMessages(10)
+        .withVisibilityTimeout(0);
     List<Message> sqsMessages = amazonSQS.receiveMessage(receiveMessageRequest).getMessages();
 
     return sqsMessages;
@@ -60,10 +62,16 @@ public class SQSService {
 
   public List<Message> getSqsMessages(String queueName) {
     ReceiveMessageRequest receiveMessageRequest = new ReceiveMessageRequest(queueName)
-        .withMaxNumberOfMessages(10);
+        .withMaxNumberOfMessages(10)
+        .withVisibilityTimeout(0);
     List<Message> sqsMessages = amazonSQS.receiveMessage(receiveMessageRequest).getMessages();
 
     return sqsMessages;
+  }
+
+  public String sendMessage(String queueUrl, String message) {
+    SendMessageResult sendMessageResult = amazonSQS.sendMessage(queueUrl, message);
+    return sendMessageResult.getMessageId();
   }
 
   public String delete(String queueUrl) {

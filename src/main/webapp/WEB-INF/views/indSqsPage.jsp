@@ -11,29 +11,45 @@
     <head>
         <title>${sqsQueue}</title>
         <link rel="stylesheet" href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/resources/css/app.css">
     </head>
     <body>
-        <div class="container">
-            <a class="mt-5" href="/" title="home">
-                <img style="height: 20px; margin: 10px" class="img-fluid" alt="SNS" src="/resources/images/awstool.png" />
-                &nbsp;Home</a>
-            <h2 class="font-weight-bold text-center text-lg-left mt-4 mb-0">SQS</h2>
-            <hr class="mt-2 mb-5">
+        <div class="container app-shell">
+            <a class="app-top-link" href="/" title="home">
+                <img class="img-fluid" alt="Home" src="/resources/images/awstool.png" />
+                Home</a>
+
+            <div class="page-header">
+                <img class="img-fluid" alt="SQS" src="/resources/images/sqs.png" />
+                <div>
+                    <h2 class="font-weight-bold">SQS</h2>
+                    <span class="resource-name">${sqsQueue}</span>
+                </div>
+            </div>
 
             <div class="row">
-                <div class="col-lg-12">
-                    <div class="row">
-                        <div class="col-lg-5">
-                            <img style="height: 200px; margin: 10px" alt="SQS" class="img-fluid img-thumbnail"
-                                 src="/resources/images/sqs.png">
+                <div class="col-lg-5 mb-4">
+                    <div class="card app-panel">
+                        <div class="card-header">Send Message</div>
+                        <div class="card-body">
+                            <h5>Send Message</h5>
+                            <input type="hidden" id="queueName" value="${sqsQueue}">
+                            <div class="form-group">
+                                <textarea class="form-control compact-textarea" id="sqsMessageBox" rows="7"></textarea>
+                            </div>
+                            <button type="button" class="btn btn-primary" id="sendSqsMessage">Send</button>
+                            <div class="alert alert-success mt-3" id="sqsSendResult" style="display: none">
+                                Message ID : <span id="sqsMessageId"></span>
+                            </div>
                         </div>
-                        <div class="col-lg-7" style="margin-top: 50px">
-                            <h4 class="align-middle">${sqsQueue}</h4>
-                        </div>
-                        <div class="col-lg-12" style="padding-top: 2em">
-                            <h5>Messages</h5>
+                    </div>
+                </div>
+                <div class="col-lg-7 mb-4">
+                    <div class="card app-panel">
+                        <div class="card-header">Messages</div>
+                        <div class="card-body">
 
-                            <table class="table table-striped" style="font-size: 0.8em">
+                            <table class="table table-striped table-sm">
                                 <thead>
                                 <tr>
                                     <th scope="col">#</th>
@@ -42,17 +58,20 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <ul class='list-group'>
                                     <c:if test="${not empty messages}">
                                         <c:forEach items="${messages}" var="message" varStatus="loop">
                                         <tr>
                                             <th scope="row">${loop.index}</th>
-                                            <td><b>${message.messageId}</b></td>
-                                            <td>${message.body}</td>
+                                            <td class="code-cell"><b>${message.messageId}</b></td>
+                                            <td class="code-cell">${message.body}</td>
                                         </tr>
                                         </c:forEach>
                                     </c:if>
-                                </ul>
+                                    <c:if test="${empty messages}">
+                                        <tr>
+                                            <td colspan="3" class="text-muted">No messages found.</td>
+                                        </tr>
+                                    </c:if>
                                 </tbody>
                             </table>
                         </div>
@@ -61,4 +80,6 @@
             </div>
         </div>
     </body>
+    <script src="/webjars/jquery/3.4.1/jquery.min.js"></script>
+    <script type="text/javascript" src="/resources/js/indSqsPage.js"></script>
 </html>

@@ -11,28 +11,27 @@
 <head>
     <title>${topicArn}</title>
     <link rel="stylesheet" href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/resources/css/app.css">
 </head>
 <body>
-<div class="container">
-    <a class="mt-5" href="/" title="home">
-        <img style="height: 20px; margin: 10px" class="img-fluid" alt="SNS" src="/resources/images/awstool.png" />
-        &nbsp;Home</a>
-    <h2 class="font-weight-bold text-center text-lg-left mt-4 mb-0">SNS</h2>
-    <hr class="mt-2 mb-5">
+<div class="container app-shell">
+    <a class="app-top-link" href="/" title="home">
+        <img class="img-fluid" alt="Home" src="/resources/images/awstool.png" />
+        Home</a>
+    <div class="page-header">
+        <img class="img-fluid" alt="SNS" src="/resources/images/sns.png" />
+        <div>
+            <h2 class="font-weight-bold">SNS</h2>
+            <span class="resource-name">${topicArn}</span>
+        </div>
+    </div>
 
     <div class="row">
-        <div class="col-lg-12">
-            <div class="row">
-                <div class="col-lg-3">
-                    <img style="height: 200px; margin: 10px" alt="SNS" class="img-fluid img-thumbnail"
-                         src="/resources/images/sns.png">
-                </div>
-                <div class="col-lg-9" style="margin-top: 50px">
-                    <h4 class="align-middle">${topicArn}</h4>
-                </div>
-                <div class="col-lg-12">
-                    <h5>Subscriptions</h5>
-                    <table class="table table-striped" style="font-size: 0.8em">
+        <div class="col-lg-7 mb-4">
+            <div class="card app-panel">
+                <div class="card-header">Subscriptions</div>
+                <div class="card-body">
+                    <table class="table table-striped table-sm">
                         <thead>
                         <tr>
                             <th scope="col">#</th>
@@ -45,7 +44,7 @@
                             <c:forEach items="${subscriptions}" var="subscription" varStatus="loop">
                                 <tr>
                                     <th scope="row">${loop.index}</th>
-                                    <td><b>${subscription.key}</b></td>
+                                    <td class="code-cell"><b>${subscription.key}</b></td>
                                     <td><button id="${subscription.key}" data-id="${subscription.key}" data-name="${subscription.value}" type="button" class="btn btn-danger btn-sm removeSubsription">Remove</button>
                                     </td>
                                 </tr>
@@ -53,24 +52,28 @@
                         </c:if>
                         </tbody>
                     </table>
-
-                </div>
-                <hr style="padding-top: 10em"/>
-                <div class="col-lg-12">
-                    <h5 class="h5">Send Message to topic</h5>
-                    <div class="form-group">
-                        <textarea class="form-control" id="messageBox" rows="6" style="font-size: 0.8em"></textarea>
-                        <input type="hidden" id="topicArn" value="${topicArn}">
-                    </div>
-                </div>
-                <div class="col-lg-12" style="padding-top: 2em">
-                    <button type="button" class="btn btn-dark" id="sendMessage">Send</button>
-                </div>
-                <div class="col-lg-12" id="messageResult" style="padding-top: 2em; display: none">
-                    Message ID : <span id="messageId"></span>
+                    <c:if test="${empty subscriptions}">
+                        <div class="empty-state">No subscriptions found.</div>
+                    </c:if>
                 </div>
             </div>
         </div>
+        <div class="col-lg-5 mb-4">
+            <div class="card app-panel">
+                <div class="card-header">Send Message</div>
+                <div class="card-body">
+                    <h5 class="h5">Send Message to topic</h5>
+                    <div class="form-group">
+                        <textarea class="form-control compact-textarea" id="messageBox" rows="8"></textarea>
+                        <input type="hidden" id="topicArn" value="${topicArn}">
+                    </div>
+                    <button type="button" class="btn btn-primary" id="sendMessage">Send</button>
+                    <div class="alert alert-success mt-3" id="messageResult" style="display: none">
+                        Message ID : <span id="messageId"></span>
+                    </div>
+                </div>
+            </div>
+            </div>
     </div>
 </div>
 

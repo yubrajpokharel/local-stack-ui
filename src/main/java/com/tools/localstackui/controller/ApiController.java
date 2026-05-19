@@ -11,8 +11,12 @@ import com.amazonaws.services.sqs.model.Message;
 import com.tools.localstackui.services.S3Service;
 import com.tools.localstackui.services.SNSService;
 import com.tools.localstackui.services.SQSService;
+import com.tools.localstackui.services.RedisService;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,6 +37,9 @@ public class ApiController {
 
   @Autowired
   S3Service s3Service;
+
+  @Autowired
+  RedisService redisService;
 
   private static final String LOCAL_SQS_URL = "http://sqs.us-east-1.localhost.localstack.cloud:4566/000000000000/";
   private static final String LOCAL_S3_URL = "http://s3.us-east-1.localhost.localstack.cloud:4566";
@@ -104,6 +111,12 @@ public class ApiController {
     return sqsService.getQueues();
   }
 
+  @PostMapping(value = "/sqs/sendMessage/{queueUrl}", consumes = MediaType.TEXT_PLAIN_VALUE)
+  public String sendSqsMessage(@PathVariable("queueUrl") String queueUrl,
+      @RequestBody String message) {
+    return sqsService.sendMessage(LOCAL_SQS_URL + queueUrl, message);
+  }
+
   @PostMapping(value = "/deleteQueue/{queueUrl}")
   public String deleteQueue(@PathVariable("queueUrl") String queueUrl) {
     return sqsService.delete(LOCAL_SQS_URL + queueUrl);
@@ -157,5 +170,46 @@ public class ApiController {
       @PathVariable(value = "fileName") String fileName) {
     return this.s3Service
         .deleteFileFromS3Bucket(LOCAL_S3_URL + bucketName + "/" + fileName, bucketName);
+  }
+
+  /*****************************************************
+   * Redis Starts
+   *****************************************************/
+
+  @GetMapping(value = "/redis/health", produces = APPLICATION_JSON_VALUE)
+  public Map<String, String> getRedisHealth() {
+    Map<String, String> response = new LinkedHashMap<>();
+    response.put("status", redisService.ping());
+    return response;
+  }
+
+  @GetMapping(value = "/redis/keys", produces = APPLICATION_JSON_VALUE)
+  public List<String> getRedisKeys() {
+    return redisService.getKeys();
+  }
+
+  @GetMapping(value = "/redis/value/{key}", produces = APPLICATION_JSON_VALUE)
+  public Map<String, String> getRedisValue(@PathVariable("key") String key) {
+    Map<String, String> response = new LinkedHashMap<>();
+    String value = redisService.getValue(key);
+    response.put("key", key);
+    response.put("value", value == null ? "" : value);
+    return response;
+  }
+
+  @PostMapping(value = "/redis/value/{key}", consumes = MediaType.TEXT_PLAIN_VALUE,
+      produces = APPLICATION_JSON_VALUE)
+  public Map<String, String> setRedisValue(@PathVariable("key") String key,
+      @RequestBody String value) {
+    redisService.setValue(key, value);
+    return getRedisValue(key);
+  }
+
+  @DeleteMapping(value = "/redis/value/{key}", produces = APPLICATION_JSON_VALUE)
+  public Map<String, Object> deleteRedisValue(@PathVariable("key") String key) {
+    Map<String, Object> response = new LinkedHashMap<>();
+    response.put("key", key);
+    response.put("deleted", redisService.delete(key));
+    return response;
   }
 }

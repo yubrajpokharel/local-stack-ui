@@ -4,43 +4,47 @@
 <head>
     <title>Localstack</title>
     <link rel="stylesheet" href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/resources/css/app.css">
 </head>
 <body>
-<div class="container">
-    <a class="mt-5" href="/" title="home">
-        <img style="height: 20px; margin: 10px" class="img-fluid" alt="SNS" src="resources/images/awstool.png" />
-        &nbsp;Home</a>
+<div class="container app-shell">
+    <a class="app-top-link" href="/" title="home">
+        <img class="img-fluid" alt="Home" src="resources/images/awstool.png" />
+        Home</a>
 
-    <h2 class="font-weight-bold text-center text-lg-left mt-4 mb-0">S3 Service</h2>
-    <hr class="mt-2 mb-5">
-
-    <div class="row">
-        <div class="col-lg-6">
-            <div class="row">
-                <div class="col-lg-12 text-left">
-                    <img style="height: 100px; margin: 10px" class="img-fluid img-thumbnail" alt="SNS" src="resources/images/s3.png" />
-                </div>
-                <div class="col-lg-12" id="bucketList"></div>
-            </div>
+    <div class="page-header">
+        <img class="img-fluid" alt="S3" src="resources/images/s3.png" />
+        <div>
+            <h2 class="font-weight-bold">S3 Service</h2>
+            <span class="badge badge-primary">Buckets</span>
         </div>
     </div>
 
-    <div class="row">&nbsp;</div>
-
     <div class="row">
-        <div class="col-lg-12">
-            <div class="card">
+        <div class="col-lg-6">
+            <div class="card app-panel">
+                <div class="card-header">
+                    <div class="service-card-header">
+                        <img class="img-fluid" alt="S3" src="resources/images/s3.png" />
+                        <span>Buckets</span>
+                    </div>
+                </div>
+                <div class="card-body resource-list" id="bucketList"></div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card app-panel">
                 <div class="card-header">
                     Create Bucket
                 </div>
                 <div class="card-body">
-                    <div class="input-group" style="margin-bottom: 5px">
+                    <div class="input-group mb-3">
                         <div class="input-group-prepend">
                             <span class="input-group-text">New Bucket name</span>
                         </div>
                         <input id="bucketName" type="text" aria-label="bucket name" class="form-control">
                     </div>
-                    <button id="createBucket" href="#" class="btn btn-primary mt-2">Create</button>
+                    <button id="createBucket" href="#" class="btn btn-primary">Create</button>
                 </div>
             </div>
         </div>

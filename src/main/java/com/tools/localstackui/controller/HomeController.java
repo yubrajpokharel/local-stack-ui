@@ -24,5 +24,14 @@ public class HomeController {
     return "s3s";
   }
 
+  @RequestMapping(value = "/redis", method = GET)
+  public String redis(Model model) {
+    return "redis";
+  }
+
+  @RequestMapping(value = "/mock-http", method = GET)
+  public String mockHttp(Model model) {
+    return "mockHttp";
+  }
 
 }

@@ -4,32 +4,50 @@
 <head>
     <title>Localstack</title>
     <link rel="stylesheet" href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/resources/css/app.css">
 </head>
 <body>
-<div class="container">
+<div class="container app-shell">
 
-    <h1 class="font-weight-bold text-center text-lg-left mt-4 mb-0">Localstack Services</h1>
-    <hr class="mt-2 mb-5">
-
-    <div class="row text-center">
-
-        <div class="col-lg-4 col-md-4 col-6">
-            <a href="/messaging" class="mb-4 h-100">
-                <img style="height: 150px; margin: 10px" class="img-fluid img-thumbnail" alt="SNS" src="resources/images/sns.png" /> <br>
-            </a>
-            <span class="badge badge-primary">SNS</span>
+    <div class="page-header">
+        <img class="img-fluid" alt="Localstack" src="resources/images/awstool.png" />
+        <div>
+            <h1 class="font-weight-bold">Localstack Services</h1>
+            <span class="badge badge-primary">Control panel</span>
         </div>
-        <div class="col-lg-4 col-md-4 col-6">
-            <a href="/messaging" class="mb-4 h-100">
-                <img  style="height: 150px; margin: 10px" class="img-fluid img-thumbnail" alt="SQS" src="resources/images/sqs.png" /> <br>
+    </div>
+
+    <div class="row service-grid">
+
+        <div class="col-lg-3 col-md-4 col-6">
+            <a href="/messaging" class="service-tile">
+                <img class="img-fluid" alt="SNS" src="resources/images/sns.png" /> <br>
+                <span class="badge badge-primary">SNS</span>
             </a>
-            <span class="badge badge-primary">SQS</span>
         </div>
-        <div class="col-lg-4 col-md-4 col-6">
-            <a href="/s3" class="mb-4 h-100">
-                <img style="height: 150px; margin: 10px" class="img-fluid img-thumbnail" alt="S3"  src="resources/images/s3.png"> <br>
+        <div class="col-lg-3 col-md-4 col-6">
+            <a href="/messaging" class="service-tile">
+                <img class="img-fluid" alt="SQS" src="resources/images/sqs.png" /> <br>
+                <span class="badge badge-primary">SQS</span>
             </a>
-            <span class="badge badge-primary">S3</span>
+        </div>
+        <div class="col-lg-3 col-md-4 col-6">
+            <a href="/s3" class="service-tile">
+                <img class="img-fluid" alt="S3" src="resources/images/s3.png"> <br>
+                <span class="badge badge-primary">S3</span>
+            </a>
+        </div>
+        <div class="col-lg-3 col-md-4 col-6">
+            <a href="/redis" class="service-tile">
+                <img class="img-fluid" alt="Redis" src="resources/images/cache.png" /> <br>
+                <span class="badge badge-primary">Redis</span>
+            </a>
+        </div>
+        <div class="col-lg-3 col-md-4 col-6">
+            <a href="/mock-http" class="service-tile">
+                <img class="img-fluid" alt="Mock HTTP" src="resources/images/http.png" /> <br>
+                <span class="badge badge-primary">Mock HTTP</span>
+            </a>
         </div>
     </div>
 

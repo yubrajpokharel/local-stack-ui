@@ -17,19 +17,20 @@ $(document).ready(function () {
     }).done(function (msg) {
       var result = $.parseJSON(msg);
       var listElement = "<ul class='list-group'>";
+      if (result.length == 0) {
+        listElement = listElement + "<li class='list-group-item text-muted'>None found</li>";
+      }
       $.each(result, (function (index, element) {
         if (queueOrTopic == "queue") {
           listElement = listElement + "<li class='list-group-item'>"
-              + functionGenerateLinkForQueue(url, element) +
-              "&nbsp;&nbsp;&nbsp;<span data-type = \"queue\"data-name ="
-              + element
-              + " class=\"badge badge-danger delete\">Delete</span></li>";
+              + functionGenerateLinkForQueue(url, element)
+              + "<span data-type=\"queue\" data-name=\"" + element
+              + "\" class=\"badge badge-danger delete\">Delete</span></li>";
         } else {
           listElement = listElement + "<li class='list-group-item'>"
-              + functionGenerateLink(url, element) +
-              "&nbsp;&nbsp;&nbsp;<span data-type = \"topic\"data-name ="
-              + element
-              + " class=\"badge badge-danger delete\">Delete</span></li>";
+              + functionGenerateLink(url, element)
+              + "<span data-type=\"topic\" data-name=\"" + element
+              + "\" class=\"badge badge-danger delete\">Delete</span></li>";
         }
       }));
       listElement = listElement + "</ul>";
@@ -58,14 +59,14 @@ $(document).ready(function () {
 
   function functionGenerateLinkForQueue(prePender, path) {
     var sqsName = path.split("/").pop();
-    return "<a href=" + "sqs-message" + "/" + sqsName + " title=" + sqsName + ">"
+    return "<a class='resource-link' href=" + "sqs-message" + "/" + sqsName + " title=" + sqsName + ">"
         + sqsName + "</a>";
   }
 
   function functionGenerateLink(prePender, path) {
     var sns = path.split(":");
     var snsName = sns[sns.length - 1];
-    return "<a href=" + prePender + "/" + path + " title=" + path + ">"
+    return "<a class='resource-link' href=" + prePender + "/" + path + " title=" + path + ">"
         + snsName + "</a>";
   }
 
@@ -82,7 +83,7 @@ $(document).ready(function () {
 
   $('#createQueue').click(function () {
     var queueName = $('#queueName').val();
-    if (topicName.length != 0) {
+    if (queueName.length != 0) {
       var endPointToCreateQueue = "/sqs/createQueue/" + queueName;
       create(endPointToCreateQueue);
       $('#queueName').val("");
@@ -153,5 +154,4 @@ $(document).ready(function () {
     }
   });
 });
-
 

@@ -11,38 +11,33 @@
 <head>
     <title>${sqsQueue}</title>
     <link rel="stylesheet" href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/resources/css/app.css">
 </head>
 <body>
-<div class="container">
-    <a class="mt-5" href="/" title="home">
-        <img style="height: 20px; margin: 10px" class="img-fluid" alt="SNS"
-             src="/resources/images/awstool.png"/>
-        &nbsp;Home</a>
-    <h2 class="font-weight-bold text-center text-lg-left mt-4 mb-0">S3 - Bucket</h2>
-    <hr class="mt-2 mb-5">
+<div class="container app-shell">
+    <a class="app-top-link" href="/" title="home">
+        <img class="img-fluid" alt="Home" src="/resources/images/awstool.png"/>
+        Home</a>
+    <div class="page-header">
+        <img class="img-fluid" alt="S3" src="/resources/images/s3.png" />
+        <div>
+            <h2 class="font-weight-bold">S3 Bucket</h2>
+            <span class="resource-name">${bucketName}</span>
+        </div>
+    </div>
     <input id="bucketName" value="${bucketName}" name="bucketName" type="hidden">
     <div class="row">
         <div class="col-lg-12">
-            <div class="row">
-                <div class="col-lg-5">
-                    <img style="height: 200px; margin: 10px" alt="SQS"
-                         class="img-fluid img-thumbnail"
-                         src="/resources/images/s3.png">
-                </div>
-                <div class="col-lg-7" style="margin-top: 50px">
-                    <h4 class="align-middle">${bucketName}</h4>
-                </div>
-                <div class="col-lg-12 mt-2">
-                    <!-- Button trigger modal -->
+            <div class="card app-panel">
+                <div class="card-header">
+                    <span>Contents</span>
                     <button type="button" class="btn btn-primary" data-toggle="modal"
                             data-target="#addFileModal">
                         Upload file
                     </button>
                 </div>
-                <div class="col-lg-12" style="padding-top: 2em">
-                    <h5>Contents</h5>
-
-                    <table class="table table-striped" style="font-size: 0.8em">
+                <div class="card-body">
+                    <table class="table table-striped table-sm">
                         <thead>
                         <tr>
                             <th scope="col">#</th>
@@ -74,9 +69,9 @@
                 <form id="uploadForm" class="form-inline" method="POST"
                       enctype="multipart/form-data"
                       action="/s3-buckets/uploadFile/${bucketName}">
-                    <div class="form-group mx-sm-3 mb-2">
+                    <div class="form-group mr-sm-3 mb-2">
                         <label for="file" class="sr-only">Select File: </label>
-                        <input type="file" id="file" name="file" placeholder="Password">
+                        <input type="file" id="file" name="file" class="form-control-file">
                     </div>
                     <button type="submit" class="btn btn-primary mb-2">Upload</button>
                 </form>
@@ -134,8 +129,8 @@
               var fileName = element.split("/").pop();
               innerContent = innerContent + '<tr id="' + fileName + '">' +
                   '<th scope="row">' + index + '</th>' +
-                  '<td><b>' + fileName + '</b></td>' +
-                  '<td data-name="' + element + '"  class="deleteFile">Delete</td>' +
+                  '<td class="code-cell"><b>' + fileName + '</b></td>' +
+                  '<td><button type="button" data-name="' + element + '" class="btn btn-danger btn-sm deleteFile">Delete</button></td>' +
                   '</tr>'
             }));
           } else {
@@ -150,7 +145,7 @@
       });
     }
 
-    $(document).on('click', "td.deleteFile", function () {
+    $(document).on('click', ".deleteFile", function () {
       var key = $(this).data("name");
       $.ajax({
         url: "/s3-buckets/deleteFile/" + $("#bucketName").val() + "/" + key,

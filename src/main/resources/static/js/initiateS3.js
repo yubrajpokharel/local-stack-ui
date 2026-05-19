@@ -15,13 +15,12 @@ $(document).ready(function () {
         $.each(result, (function (index, element) {
 
           listElement = listElement + "<li class='list-group-item'>"
-              + functionGenerateLinkBucket(url, element.name) +
-              "&nbsp;&nbsp;&nbsp;<span data-type = \"bucket\"data-name ="
-              + element.name
-              + " class=\"badge badge-danger delete\">Delete</span></li>";
+              + functionGenerateLinkBucket(url, element.name)
+              + "<span data-type=\"bucket\" data-name=\"" + element.name
+              + "\" class=\"badge badge-danger delete\">Delete</span></li>";
         }));
       } else {
-        listElement = listElement + "<li class='list-group-item'>No Buckets</li>";
+        listElement = listElement + "<li class='list-group-item text-muted'>No buckets</li>";
       }
       listElement = listElement + "</ul>";
       snsList.html(listElement);
@@ -31,7 +30,7 @@ $(document).ready(function () {
   }
 
   function functionGenerateLinkBucket(prePender, path) {
-    return "<a href=" + prePender + "/" + path + ">"
+    return "<a class='resource-link' href=" + prePender + "/" + path + ">"
         + path + "</a>";
   }
 
@@ -75,5 +74,4 @@ $(document).ready(function () {
     });
   }
 });
-
 
