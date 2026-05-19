@@ -28,6 +28,16 @@
             </div>
 
             <div class="row">
+                <div class="col-lg-12 mb-4">
+                    <div class="card app-panel">
+                        <div class="card-header">Queue Details</div>
+                        <div class="card-body">
+                            <div><strong>QueueName:</strong> <span class="code-cell">${sqsQueue}</span></div>
+                            <div><strong>URL:</strong> <span class="code-cell">${sqsQueueUrl}</span></div>
+                            <div><strong>CreatedOn:</strong> <span class="code-cell">${sqsCreatedOn}</span></div>
+                        </div>
+                    </div>
+                </div>
                 <div class="col-lg-5 mb-4">
                     <div class="card app-panel">
                         <div class="card-header">Send Message</div>

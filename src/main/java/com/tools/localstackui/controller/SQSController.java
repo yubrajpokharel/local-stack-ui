@@ -25,9 +25,13 @@ public class SQSController {
   @RequestMapping(value = "/sqs-message/{queueUrl}", method = GET)
   public String getMessage(@PathVariable("queueUrl") String queueUrl, Model model) {
     System.out.println(queueUrl);
-    List<Message> messages =  sqsService.getSqsMessages("http://sqs."+region+".localhost.localstack.cloud:4566/000000000000/"+queueUrl);
+    String fullQueueUrl =
+        "http://sqs." + region + ".localhost.localstack.cloud:4566/000000000000/" + queueUrl;
+    List<Message> messages =  sqsService.getSqsMessages(fullQueueUrl);
     messages.forEach(System.out::println);
     model.addAttribute("sqsQueue", queueUrl);
+    model.addAttribute("sqsQueueUrl", fullQueueUrl);
+    model.addAttribute("sqsCreatedOn", sqsService.getCreatedOn(fullQueueUrl));
     model.addAttribute("messages", messages);
     return "indSqsPage";
   }

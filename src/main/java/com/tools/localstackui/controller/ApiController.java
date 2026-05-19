@@ -111,6 +111,11 @@ public class ApiController {
     return sqsService.getQueues();
   }
 
+  @GetMapping(value = "/sqs/details", produces = APPLICATION_JSON_VALUE)
+  public List<Map<String, String>> getSQSDetails() {
+    return sqsService.getQueueDetails();
+  }
+
   @PostMapping(value = "/sqs/sendMessage/{queueUrl}", consumes = MediaType.TEXT_PLAIN_VALUE)
   public String sendSqsMessage(@PathVariable("queueUrl") String queueUrl,
       @RequestBody String message) {
@@ -186,6 +191,11 @@ public class ApiController {
   @GetMapping(value = "/redis/keys", produces = APPLICATION_JSON_VALUE)
   public List<String> getRedisKeys() {
     return redisService.getKeys();
+  }
+
+  @GetMapping(value = "/redis/key-details", produces = APPLICATION_JSON_VALUE)
+  public List<Map<String, String>> getRedisKeyDetails() {
+    return redisService.getKeyDetails();
   }
 
   @GetMapping(value = "/redis/value/{key}", produces = APPLICATION_JSON_VALUE)

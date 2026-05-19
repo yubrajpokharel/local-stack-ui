@@ -116,14 +116,17 @@ $(document).ready(function () {
       }
 
       var table = "<div class='table-responsive'><table class='table table-hover table-sm mb-0'>"
-          + "<thead><tr><th>Name</th><th>Endpoint</th><th>Response</th><th>Action</th></tr></thead><tbody>";
+          + "<thead><tr><th>Name</th><th>Address</th><th>CreatedOn</th><th>Response</th><th>Action</th></tr></thead><tbody>";
 
       $.each(servers, function (index, server) {
+        var address = server.address || ("http://localhost:" + server.port);
+        var createdOn = formatDisplayTime(server.createdOn);
         table = table + "<tr>"
             + "<td><strong>" + escapeHtml(server.name || "") + "</strong><br>"
             + "<span class='badge badge-success'>running</span></td>"
-            + "<td><a class='badge badge-light' href='http://localhost:" + server.port
-            + "' target='_blank'>localhost:" + server.port + "</a></td>"
+            + "<td><a class='badge badge-light' href='" + escapeHtml(address)
+            + "' target='_blank'>" + escapeHtml(address) + "</a></td>"
+            + "<td><span class='resource-meta'>" + escapeHtml(createdOn) + "</span></td>"
             + "<td><code class='mock-response d-inline-block'>"
             + escapeHtml(server.response || "") + "</code></td>"
             + "<td>"
@@ -146,6 +149,22 @@ $(document).ready(function () {
 
   function showMessage(text, type) {
     message.html("<div class='alert alert-" + type + "'>" + escapeHtml(text) + "</div>");
+  }
+
+  function formatDisplayTime(value) {
+    if (!value) {
+      return "Unavailable";
+    }
+    var date = new Date(value);
+    if (isNaN(date.getTime())) {
+      return String(value).substring(0, 16);
+    }
+    return date.getFullYear() + "-" + pad(date.getMonth() + 1) + "-" + pad(date.getDate())
+        + "T" + pad(date.getHours()) + ":" + pad(date.getMinutes());
+  }
+
+  function pad(value) {
+    return String(value).padStart(2, "0");
   }
 
   function escapeHtml(value) {

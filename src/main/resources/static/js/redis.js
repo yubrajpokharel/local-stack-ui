@@ -67,7 +67,7 @@ $(document).ready(function () {
 
   function loadKeys() {
     $.ajax({
-      url: "/redis/keys",
+      url: "/redis/key-details",
       method: "GET",
       dataType: "json"
     }).done(function (keys) {
@@ -76,10 +76,16 @@ $(document).ready(function () {
         return;
       }
       var listElement = "<div class='list-group'>";
-      $.each(keys, function (index, key) {
+      $.each(keys, function (index, keyDetails) {
+        var key = keyDetails.name;
+        var createdOn = keyDetails.createdOn || "Unavailable";
         listElement = listElement
             + "<button type='button' class='list-group-item list-group-item-action redis-key' data-key='"
-            + escapeHtml(key) + "'>" + escapeHtml(key) + "</button>";
+            + escapeHtml(key) + "'>"
+            + "<strong>" + escapeHtml(key) + "</strong>"
+            + "<span class='resource-meta'>URL: " + escapeHtml(keyDetails.address) + "</span>"
+            + "<span class='resource-meta'>CreatedOn: " + escapeHtml(createdOn) + "</span>"
+            + "</button>";
       });
       listElement = listElement + "</div>";
       keyList.html(listElement);

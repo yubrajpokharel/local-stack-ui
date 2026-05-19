@@ -15,7 +15,7 @@ $(document).ready(function () {
         $.each(result, (function (index, element) {
 
           listElement = listElement + "<li class='list-group-item'>"
-              + functionGenerateLinkBucket(url, element.name)
+              + functionGenerateLinkBucket(url, element)
               + "<span data-type=\"bucket\" data-name=\"" + element.name
               + "\" class=\"badge badge-danger delete\">Delete</span></li>";
         }));
@@ -29,9 +29,29 @@ $(document).ready(function () {
     });
   }
 
-  function functionGenerateLinkBucket(prePender, path) {
-    return "<a class='resource-link' href=" + prePender + "/" + path + ">"
-        + path + "</a>";
+  function functionGenerateLinkBucket(prePender, bucket) {
+    var localstackUrl = "http://s3.us-east-1.localhost.localstack.cloud:4566/" + bucket.name;
+    var createdOn = formatDisplayTime(bucket.creationDate);
+    return "<a class='resource-link' href=" + prePender + "/" + bucket.name + ">"
+        + bucket.name + "</a>"
+        + "<span class='resource-meta'>URL: " + localstackUrl + "</span>"
+        + "<span class='resource-meta'>CreatedOn: " + createdOn + "</span>";
+  }
+
+  function formatDisplayTime(value) {
+    if (!value) {
+      return "Unavailable";
+    }
+    var date = new Date(value);
+    if (isNaN(date.getTime())) {
+      return String(value).substring(0, 16);
+    }
+    return date.getFullYear() + "-" + pad(date.getMonth() + 1) + "-" + pad(date.getDate())
+        + "T" + pad(date.getHours()) + ":" + pad(date.getMinutes());
+  }
+
+  function pad(value) {
+    return String(value).padStart(2, "0");
   }
 
   $(document).on('click', "span.delete", function () {
@@ -74,4 +94,3 @@ $(document).ready(function () {
     });
   }
 });
-

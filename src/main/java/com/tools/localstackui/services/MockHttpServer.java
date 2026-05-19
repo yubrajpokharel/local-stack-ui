@@ -7,8 +7,7 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.Instant;
 
 public class MockHttpServer implements Runnable {
 
@@ -17,6 +16,7 @@ public class MockHttpServer implements Runnable {
   private String responseBody;
   private ServerSocket serverSocket;
   private volatile boolean running = false;
+  private Instant createdOn;
 
   public MockHttpServer(int port) throws IOException {
     this("mock-server-" + port, port, "ok");
@@ -28,6 +28,7 @@ public class MockHttpServer implements Runnable {
     this.responseBody = responseBody;
     this.serverSocket = new ServerSocket(port);
     this.running = true;
+    this.createdOn = Instant.now();
   }
 
   @Override
@@ -69,6 +70,10 @@ public class MockHttpServer implements Runnable {
 
   public String getResponseBody() {
     return responseBody;
+  }
+
+  public Instant getCreatedOn() {
+    return createdOn;
   }
 
   private static class ClientHandler implements Runnable {
