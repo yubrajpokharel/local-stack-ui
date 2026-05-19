@@ -55,7 +55,7 @@ public class AWSConfiguration {
         .standard()
         .withCredentials(new AWSStaticCredentialsProvider(awsCredentials()))
         .withEndpointConfiguration(
-            new EndpointConfiguration("http://localhost:4566/_aws/s3", region)
+            new EndpointConfiguration("http://s3."+region+".localhost.localstack.cloud:4566", region)
         )
         .withPathStyleAccessEnabled(true)
         .build();

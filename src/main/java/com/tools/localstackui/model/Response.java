@@ -5,5 +5,5 @@ import lombok.Data;
 
 @Data
 public class Response {
-  private final JsonElement response;
+  private JsonElement response;
 }

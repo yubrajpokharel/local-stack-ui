@@ -34,8 +34,8 @@ public class ApiController {
   @Autowired
   S3Service s3Service;
 
-  private static final String LOCAL_SQS_URL = "http://localhost:4566/_aws/sqs/";
-  private static final String LOCAL_S3_URL = "http://localhost:4566/_aws/s3";
+  private static final String LOCAL_SQS_URL = "http://sqs.us-east-1.localhost.localstack.cloud:4566/000000000000/";
+  private static final String LOCAL_S3_URL = "http://s3.us-east-1.localhost.localstack.cloud:4566";
 
 
   /*****************************************************
