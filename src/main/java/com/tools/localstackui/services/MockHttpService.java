@@ -73,7 +73,9 @@ public class MockHttpService {
       Map<String, Object> serverInfo = new HashMap<>();
       serverInfo.put("port", entry.getKey());
       serverInfo.put("name", entry.getValue().getServerName());
+      serverInfo.put("address", "http://localhost:" + entry.getKey());
       serverInfo.put("response", entry.getValue().getResponseBody());
+      serverInfo.put("createdOn", entry.getValue().getCreatedOn().toString());
       serverInfo.put("running", entry.getValue().isRunning());
       result.add(serverInfo);
     }

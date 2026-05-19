@@ -23,7 +23,7 @@ $(document).ready(function () {
       $.each(result, (function (index, element) {
         if (queueOrTopic == "queue") {
           listElement = listElement + "<li class='list-group-item'>"
-              + functionGenerateLinkForQueue(url, element)
+              + functionGenerateLinkForQueue(element)
               + "<span data-type=\"queue\" data-name=\"" + element
               + "\" class=\"badge badge-danger delete\">Delete</span></li>";
         } else {
@@ -57,7 +57,7 @@ $(document).ready(function () {
     });
   }
 
-  function functionGenerateLinkForQueue(prePender, path) {
+  function functionGenerateLinkForQueue(path) {
     var sqsName = path.split("/").pop();
     return "<a class='resource-link' href=" + "sqs-message" + "/" + sqsName + " title=" + sqsName + ">"
         + sqsName + "</a>";
@@ -154,4 +154,3 @@ $(document).ready(function () {
     }
   });
 });
-

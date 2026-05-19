@@ -146,6 +146,14 @@ a {
   overflow-wrap: anywhere;
 }
 
+.resource-meta {
+  color: #64748b;
+  display: block;
+  font-size: 0.78rem;
+  margin-top: 3px;
+  overflow-wrap: anywhere;
+}
+
 .delete,
 .deleteFile {
   cursor: pointer;
