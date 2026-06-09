@@ -42,7 +42,7 @@
                         <tr>
                             <th scope="col">#</th>
                             <th scope="col">Name</th>
-                            <th scope="col">Action</th>
+                            <th scope="col">Actions</th>
                         </tr>
                         </thead>
                         <tbody id="fileContents"></tbody>
@@ -127,10 +127,13 @@
           if (result.length > 0) {
             $.each(result, (function (index, element) {
               var fileName = element.split("/").pop();
+              var downloadUrl = "/s3-buckets/download/" + encodeURIComponent($("#bucketName").val())
+                  + "?fileName=" + encodeURIComponent(element);
               innerContent = innerContent + '<tr id="' + fileName + '">' +
                   '<th scope="row">' + index + '</th>' +
                   '<td class="code-cell"><b>' + fileName + '</b></td>' +
-                  '<td><button type="button" data-name="' + element + '" class="btn btn-danger btn-sm deleteFile">Delete</button></td>' +
+                  '<td><a href="' + downloadUrl + '" class="btn btn-secondary btn-sm mr-1">Download</a>' +
+                  '<button type="button" data-name="' + element + '" class="btn btn-danger btn-sm deleteFile">Delete</button></td>' +
                   '</tr>'
             }));
           } else {

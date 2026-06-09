@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Cloud Storage">
+  <rect width="128" height="128" rx="18" fill="#34a853"/>
+  <path d="M31 46l33-18 33 18v36L64 101 31 82z" fill="#fff"/>
+  <path d="M31 46l33 18 33-18M64 64v37" fill="none" stroke="#34a853" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

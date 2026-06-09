@@ -16,13 +16,16 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -102,8 +105,9 @@ public class ApiController {
    *****************************************************/
 
   @PostMapping(value = "/sqs/createQueue/{queueName}")
-  public String createQueue(@PathVariable("queueName") String queueName) {
-    return sqsService.createQueue(queueName);
+  public String createQueue(@PathVariable("queueName") String queueName,
+      @RequestParam(value = "type", defaultValue = "Standard") String queueType) {
+    return sqsService.createQueue(queueName, queueType);
   }
 
   @GetMapping(value = "/sqs", produces = APPLICATION_JSON_VALUE)
@@ -118,8 +122,11 @@ public class ApiController {
 
   @PostMapping(value = "/sqs/sendMessage/{queueUrl}", consumes = MediaType.TEXT_PLAIN_VALUE)
   public String sendSqsMessage(@PathVariable("queueUrl") String queueUrl,
+      @RequestParam(value = "messageGroupId", required = false) String messageGroupId,
+      @RequestParam(value = "messageDeduplicationId", required = false) String messageDeduplicationId,
       @RequestBody String message) {
-    return sqsService.sendMessage(LOCAL_SQS_URL + queueUrl, message);
+    return sqsService.sendMessage(LOCAL_SQS_URL + queueUrl, message, messageGroupId,
+        messageDeduplicationId);
   }
 
   @PostMapping(value = "/deleteQueue/{queueUrl}")
@@ -170,6 +177,18 @@ public class ApiController {
     return this.s3Service.uploadFile(file, bucketName);
   }
 
+  @GetMapping("/s3-buckets/download/{bucketName}")
+  public ResponseEntity<byte[]> downloadFile(@PathVariable(value = "bucketName") String bucketName,
+      @RequestParam(value = "fileName") String fileName) throws Exception {
+    S3Service.S3ObjectDownload download = this.s3Service.downloadFile(bucketName, fileName);
+    String downloadName = fileName.contains("/") ? fileName.substring(fileName.lastIndexOf("/") + 1)
+        : fileName;
+    return ResponseEntity.ok()
+        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + downloadName + "\"")
+        .contentType(MediaType.parseMediaType(download.contentType()))
+        .body(download.content());
+  }
+
   @DeleteMapping("/s3-buckets/deleteFile/{bucketName}/{fileName}")
   public String deleteFile(@PathVariable(value = "bucketName") String bucketName,
       @PathVariable(value = "fileName") String fileName) {
@@ -185,6 +204,37 @@ public class ApiController {
   public Map<String, String> getRedisHealth() {
     Map<String, String> response = new LinkedHashMap<>();
     response.put("status", redisService.ping());
+    return response;
+  }
+
+  @GetMapping(value = "/redis/status", produces = APPLICATION_JSON_VALUE)
+  public Map<String, Object> getRedisStatus() {
+    return redisService.getStatus();
+  }
+
+  @PostMapping(value = "/redis/start", produces = APPLICATION_JSON_VALUE)
+  public Map<String, String> startRedis() {
+    Map<String, String> response = new LinkedHashMap<>();
+    try {
+      response.put("status", "success");
+      response.put("message", redisService.startRedis());
+    } catch (Exception e) {
+      response.put("status", "error");
+      response.put("message", e.getMessage());
+    }
+    return response;
+  }
+
+  @PostMapping(value = "/redis/stop", produces = APPLICATION_JSON_VALUE)
+  public Map<String, String> stopRedis() {
+    Map<String, String> response = new LinkedHashMap<>();
+    try {
+      response.put("status", "success");
+      response.put("message", redisService.stopRedis());
+    } catch (Exception e) {
+      response.put("status", "error");
+      response.put("message", e.getMessage());
+    }
     return response;
   }
 

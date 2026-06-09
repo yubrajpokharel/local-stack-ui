@@ -1,13 +1,105 @@
 $(document).ready(function () {
+  var message = $('#awsMessage');
+  var status = $('#awsStatus');
+  var startButton = $('#startAws');
+  var stopButton = $('#stopAws');
+  var topicName = $('#topicName');
+  var queueName = $('#queueName');
+  var queueType = $('#queueType');
+  var createTopicButton = $('#createTopic');
+  var createQueueButton = $('#createQueue');
+  var enrollButton = $('#enroll');
   var snsList = $('#snsList');
   var sqsList = $('#sqsList');
   var snsOptions = $('#topicOptions');
   var sqsOptions = $('#queueOptions');
 
-  apiCall("/sns-topics", snsList, "topic");
-  apiCall("/sqs", sqsList, "queue");
-  populateSelectOptions("/sns-topics", snsOptions);
-  populateSelectOptions("/sqs", sqsOptions);
+  refreshAws();
+
+  $('#refreshAws').click(function () {
+    refreshAws();
+  });
+
+  startButton.click(function () {
+    showMessage("Starting AWS services...", "info");
+    $.ajax({
+      url: "/localstack/start",
+      method: "POST",
+      dataType: "json"
+    }).done(function (msg) {
+      showMessage(msg.message || msg.status, msg.status == "success" ? "success" : "danger");
+      setTimeout(refreshAws, 3000);
+    }).fail(function (jqXHR, textStatus) {
+      showMessage("Request failed: " + textStatus, "danger");
+    });
+  });
+
+  stopButton.click(function () {
+    showMessage("Stopping AWS services...", "info");
+    $.ajax({
+      url: "/localstack/stop",
+      method: "POST",
+      dataType: "json"
+    }).done(function (msg) {
+      showMessage(msg.message || msg.status, msg.status == "success" ? "success" : "danger");
+      if (msg.status == "success") {
+        setAwsUnavailable("AWS services are not running.");
+      }
+      setTimeout(refreshAws, 1200);
+    }).fail(function (jqXHR, textStatus) {
+      showMessage("Request failed: " + textStatus, "danger");
+    });
+  });
+
+  function refreshAws() {
+    $.ajax({
+      url: "/localstack/status",
+      method: "GET",
+      dataType: "json"
+    }).done(function (msg) {
+      if (msg.running) {
+        status.html("<span class='badge badge-success'>Connected</span>"
+            + "<span class='resource-meta'>URL: " + escapeHtml(msg.uri) + "</span>");
+        setAwsControls(true);
+        loadAwsResources();
+      } else {
+        status.html("<span class='badge badge-danger'>Unavailable</span>"
+            + "<span class='resource-meta'>URL: " + escapeHtml(msg.uri) + "</span>");
+        setAwsUnavailable("AWS services are not running.");
+      }
+    }).fail(function () {
+      status.html("<span class='badge badge-danger'>Unavailable</span>");
+      setAwsUnavailable("AWS status check failed.");
+    });
+  }
+
+  function loadAwsResources() {
+    apiCall("/sns-topics", snsList, "topic");
+    apiCall("/sqs/details", sqsList, "queue");
+    populateSelectOptions("/sns-topics", snsOptions);
+    populateSelectOptions("/sqs", sqsOptions);
+  }
+
+  function setAwsUnavailable(text) {
+    setAwsControls(false);
+    snsList.html("<div class='empty-state'>" + escapeHtml(text) + "</div>");
+    sqsList.html("<div class='empty-state'>" + escapeHtml(text) + "</div>");
+    snsOptions.empty();
+    sqsOptions.empty();
+  }
+
+  function setAwsControls(isRunning) {
+    startButton.toggle(!isRunning);
+    stopButton.toggle(isRunning);
+    topicName.prop('disabled', !isRunning);
+    queueName.prop('disabled', !isRunning);
+    queueType.prop('disabled', !isRunning);
+    createTopicButton.prop('disabled', !isRunning);
+    createQueueButton.prop('disabled', !isRunning);
+    snsOptions.prop('disabled', !isRunning);
+    sqsOptions.prop('disabled', !isRunning);
+    enrollButton.prop('disabled', !isRunning);
+  }
 
   function apiCall(url, snsList, queueOrTopic) {
     $.ajax({
@@ -24,7 +116,7 @@ $(document).ready(function () {
         if (queueOrTopic == "queue") {
           listElement = listElement + "<li class='list-group-item'>"
               + functionGenerateLinkForQueue(element)
-              + "<span data-type=\"queue\" data-name=\"" + element
+              + "<span data-type=\"queue\" data-name=\"" + element.name
               + "\" class=\"badge badge-danger delete\">Delete</span></li>";
         } else {
           listElement = listElement + "<li class='list-group-item'>"
@@ -36,7 +128,7 @@ $(document).ready(function () {
       listElement = listElement + "</ul>";
       snsList.html(listElement);
     }).fail(function (jqXHR, textStatus) {
-      console.log("Request failed: " + textStatus);
+      showMessage("Request failed: " + textStatus, "danger");
     });
   }
 
@@ -47,20 +139,21 @@ $(document).ready(function () {
       dataType: "html"
     }).done(function (msg) {
       var result = $.parseJSON(msg);
-      var listElement = "<ul class='list-group'>";
       selectId.empty();
       $.each(result, (function (index, element) {
         selectId.append($("<option/>").val(element).text(element));
       }));
     }).fail(function (jqXHR, textStatus) {
-      alert("Request failed: " + textStatus);
+      showMessage("Request failed: " + textStatus, "danger");
     });
   }
 
-  function functionGenerateLinkForQueue(path) {
-    var sqsName = path.split("/").pop();
+  function functionGenerateLinkForQueue(queue) {
+    var sqsName = queue.name;
+    var type = queue.type || "Standard";
     return "<a class='resource-link' href=" + "sqs-message" + "/" + sqsName + " title=" + sqsName + ">"
-        + sqsName + "</a>";
+        + sqsName + "</a>"
+        + "<span class='badge badge-light ml-2'>" + type + "</span>";
   }
 
   function functionGenerateLink(prePender, path) {
@@ -71,24 +164,25 @@ $(document).ready(function () {
   }
 
   $('#createTopic').click(function () {
-    var topicName = $('#topicName').val();
-    if (topicName.length != 0) {
-      var endPointToCreateTopic = "/sns/createTopic/" + topicName;
+    var topicNameValue = topicName.val();
+    if (topicNameValue.length != 0) {
+      var endPointToCreateTopic = "/sns/createTopic/" + topicNameValue;
       create(endPointToCreateTopic);
-      $('#topicName').val("");
+      topicName.val("");
     } else {
-      alert("topic name cannot be empty");
+      showMessage("Topic name cannot be empty.", "warning");
     }
   });
 
   $('#createQueue').click(function () {
-    var queueName = $('#queueName').val();
-    if (queueName.length != 0) {
-      var endPointToCreateQueue = "/sqs/createQueue/" + queueName;
+    var queueNameValue = queueName.val();
+    var queueTypeValue = queueType.val();
+    if (queueNameValue.length != 0) {
+      var endPointToCreateQueue = "/sqs/createQueue/" + queueNameValue + "?type=" + queueTypeValue;
       create(endPointToCreateQueue);
-      $('#queueName').val("");
+      queueName.val("");
     } else {
-      alert("queue name cannot be empty");
+      showMessage("Queue name cannot be empty.", "warning");
     }
   });
 
@@ -99,12 +193,9 @@ $(document).ready(function () {
       contentType: "application/json; charset=utf-8",
     }).done(function (msg) {
       console.log(msg);
-      apiCall("/sns-topics", snsList, "topic");
-      apiCall("/sqs", sqsList, "queue");
-      populateSelectOptions("/sns-topics", snsOptions);
-      populateSelectOptions("/sqs", sqsOptions);
+      loadAwsResources();
     }).fail(function (jqXHR, textStatus) {
-      alert("Request failed: " + textStatus);
+      showMessage("Request failed: " + textStatus, "danger");
     });
   }
 
@@ -114,9 +205,9 @@ $(document).ready(function () {
       method: "POST",
       contentType: "application/json; charset=utf-8",
     }).done(function (msg) {
-      alert("successfully subscribed to topic");
+      showMessage("Successfully subscribed to topic.", "success");
     }).fail(function (jqXHR, textStatus) {
-      alert("Request failed: " + textStatus);
+      showMessage("Request failed: " + textStatus, "danger");
     });
   };
 
@@ -135,12 +226,9 @@ $(document).ready(function () {
       contentType: "application/json; charset=utf-8",
     }).done(function (msg) {
       console.log("successfully deleted!");
-      apiCall("/sns-topics", snsList, "topic");
-      apiCall("/sqs", sqsList, "queue");
-      populateSelectOptions("/sns-topics", snsOptions);
-      populateSelectOptions("/sqs", sqsOptions);
+      loadAwsResources();
     }).fail(function (jqXHR, textStatus) {
-      console.log("Request failed: " + textStatus);
+      showMessage("Request failed: " + textStatus, "danger");
     });
   });
 
@@ -148,9 +236,22 @@ $(document).ready(function () {
     var queue = $('#queueOptions').val().split('/').pop();
     var topic = $('#topicOptions').val();
     if (queue.length == 0 || topic.length == 0) {
-      alert("Queue and topic names cannot be empty");
+      showMessage("Queue and topic names cannot be empty.", "warning");
     } else {
       subscribe("/subscribe/" + queue + "/" + topic);
     }
   });
+
+  function showMessage(text, type) {
+    message.html("<div class='alert alert-" + type + "'>" + escapeHtml(text) + "</div>");
+  }
+
+  function escapeHtml(value) {
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+  }
 });

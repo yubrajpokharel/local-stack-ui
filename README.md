@@ -1,13 +1,19 @@
 # local-stack-ui
 
-LocalStack UI for working with SNS topics, SQS queues, S3 buckets, Redis values, and lightweight mock HTTP services from one local Spring Boot app.
+LocalStack UI for working with SNS topics, SQS queues, S3 buckets, GCP Pub/Sub, GCP Cloud Storage, GCP Firestore, Redis values, MongoDB, Kafka, and lightweight mock HTTP services from one local Spring Boot app.
 
 ## Features
 
 - SNS: create/delete topics, view subscriptions, publish messages to topics.
-- SQS: create/delete queues, subscribe queues to SNS topics, view queue messages without consuming them, send messages directly to a queue.
+- SQS: create/delete Standard or FIFO queues, subscribe queues to SNS topics, view queue messages without consuming them, send messages directly to a queue.
 - S3: create/delete buckets, view/upload/delete bucket contents.
+- AWS LocalStack: check status and start/stop the LocalStack Docker service from AWS pages.
+- GCP Pub/Sub: check status, start/stop the emulator, create topics/subscriptions, publish messages.
+- GCP Cloud Storage: check status, start/stop the emulator, create/delete buckets, list/upload/delete objects.
+- GCP Firestore: check status, start/stop the emulator, create/list/delete documents.
 - Redis: check health, list keys, view/set/delete string values.
+- MongoDB: check status, start the Docker service on demand, list databases.
+- Kafka: check status, start/stop the Docker service on demand, list and create topics.
 - Mock HTTP: start/stop local mock HTTP servers with a configurable port and response body.
 
 ## Prerequisites
@@ -18,7 +24,7 @@ LocalStack UI for working with SNS topics, SQS queues, S3 buckets, Redis values,
 
 ## Run Locally
 
-Start LocalStack and Redis:
+Start LocalStack, Redis, MongoDB, Kafka, and GCP emulators:
 
 ```bash
 docker compose up -d
@@ -41,6 +47,11 @@ Useful service health checks:
 ```bash
 curl http://localhost:4566/_localstack/health
 curl http://localhost:8085/redis/health
+curl http://localhost:8085/mongodb/status
+curl http://localhost:8085/kafka/status
+curl http://localhost:8085/gcp/pubsub/status
+curl http://localhost:8085/gcp/storage/status
+curl http://localhost:8085/gcp/firestore/status
 ```
 
 ## UI Pages
@@ -50,6 +61,11 @@ curl http://localhost:8085/redis/health
 /messaging    SNS and SQS management
 /s3           S3 bucket management
 /redis        Redis key/value viewer
+/mongodb      MongoDB status and database viewer
+/kafka        Kafka status and topic viewer
+/gcp/pubsub   GCP Pub/Sub emulator
+/gcp/storage  GCP Cloud Storage emulator
+/gcp/firestore GCP Firestore emulator
 /mock-http    configurable mock HTTP services
 ```
 
@@ -68,8 +84,29 @@ Main settings live in `src/main/resources/application.properties`:
 ```properties
 server.port=8085
 aws.region.name=us-east-1
+localstack.endpoint=http://localhost:4566
+localstack.docker.service=localstack
 spring.data.redis.host=localhost
 spring.data.redis.port=6379
+spring.data.mongodb.uri=mongodb://localhost:27017/localstackui
+kafka.bootstrap.servers=localhost:9092
+kafka.docker.service=kafka
+kafka.topic.command=/opt/kafka/bin/kafka-topics.sh
+kafka.producer.command=/opt/kafka/bin/kafka-console-producer.sh
+kafka.offsets.command=/opt/kafka/bin/kafka-get-offsets.sh
+gcp.project.id=localstack-ui
+gcp.pubsub.host=localhost
+gcp.pubsub.port=8681
+gcp.pubsub.docker.service=gcp-pubsub
+gcp.pubsub.disable.credentials=true
+gcp.pubsub.api.endpoint=http://localhost:8681/
+gcp.storage.endpoint=http://localhost:4443
+gcp.storage.docker.service=gcp-storage
+gcp.firestore.host=localhost
+gcp.firestore.port=8787
+gcp.firestore.endpoint=http://localhost:8787
+gcp.firestore.docker.service=gcp-firestore
+gcp.firestore.auth.token=owner
 mock.servers=
 ```
 
@@ -78,6 +115,31 @@ Local services are defined in `docker-compose.yml`:
 ```text
 LocalStack: http://localhost:4566
 Redis:      localhost:6379
+MongoDB:    mongodb://localhost:27017
+Kafka:     kafka://localhost:9092
+GCP Pub/Sub:       pubsub://localhost:8681
+GCP Cloud Storage: http://localhost:4443
+GCP Firestore:     firestore://localhost:8787
+```
+
+## AWS LocalStack Examples
+
+Check AWS LocalStack status:
+
+```bash
+curl http://localhost:8085/localstack/status
+```
+
+Start AWS services through the app:
+
+```bash
+curl -X POST http://localhost:8085/localstack/start
+```
+
+Stop AWS services through the app:
+
+```bash
+curl -X POST http://localhost:8085/localstack/stop
 ```
 
 ## SNS Examples
@@ -111,10 +173,24 @@ curl -X POST "http://localhost:8085/deleteTopic/arn:aws:sns:us-east-1:0000000000
 
 ## SQS Examples
 
-Create a queue:
+Create a Standard queue:
 
 ```bash
-curl -X POST http://localhost:8085/sqs/createQueue/orders-queue
+curl -X POST "http://localhost:8085/sqs/createQueue/orders-queue?type=Standard"
+```
+
+Create a FIFO queue:
+
+```bash
+curl -X POST "http://localhost:8085/sqs/createQueue/orders-events?type=FIFO"
+```
+
+FIFO queues are created with `.fifo` appended if the name does not already end with `.fifo`, and content-based deduplication is enabled.
+
+List queue details, including type:
+
+```bash
+curl http://localhost:8085/sqs/details
 ```
 
 List queues:
@@ -130,6 +206,15 @@ curl -X POST \
   -H "Content-Type: text/plain" \
   --data "hello from sqs" \
   http://localhost:8085/sqs/sendMessage/orders-queue
+```
+
+Send a message directly to a FIFO queue:
+
+```bash
+curl -X POST \
+  -H "Content-Type: text/plain" \
+  --data "hello from fifo sqs" \
+  "http://localhost:8085/sqs/sendMessage/orders-events.fifo?messageGroupId=orders"
 ```
 
 View messages in the UI:
@@ -183,6 +268,12 @@ Upload and delete files are available from the S3 bucket detail page:
 http://localhost:8085/s3-buckets/demo-bucket
 ```
 
+Download an S3 object:
+
+```bash
+curl -OJ "http://localhost:8085/s3-buckets/download/demo-bucket?fileName=sample.txt"
+```
+
 Delete a bucket:
 
 ```bash
@@ -222,6 +313,174 @@ Delete a value:
 
 ```bash
 curl -X DELETE http://localhost:8085/redis/value/foo
+```
+
+## MongoDB Examples
+
+You can manage MongoDB from:
+
+```text
+http://localhost:8085/mongodb
+```
+
+Check MongoDB status:
+
+```bash
+curl http://localhost:8085/mongodb/status
+```
+
+Start MongoDB on demand through the app:
+
+```bash
+curl -X POST http://localhost:8085/mongodb/start
+```
+
+List databases:
+
+```bash
+curl http://localhost:8085/mongodb/databases
+```
+
+You can also start MongoDB directly:
+
+```bash
+docker compose up -d mongodb
+```
+
+## Kafka Examples
+
+You can manage Kafka from:
+
+```text
+http://localhost:8085/kafka
+```
+
+Check Kafka status:
+
+```bash
+curl http://localhost:8085/kafka/status
+```
+
+Start Kafka on demand through the app:
+
+```bash
+curl -X POST http://localhost:8085/kafka/start
+```
+
+Create a topic:
+
+```bash
+curl -X POST \
+  "http://localhost:8085/kafka/topics?topicName=orders-created&partitions=1&replicationFactor=1"
+```
+
+List topics:
+
+```bash
+curl http://localhost:8085/kafka/topics
+```
+
+Stop Kafka through the app:
+
+```bash
+curl -X POST http://localhost:8085/kafka/stop
+```
+
+You can also start Kafka directly:
+
+```bash
+docker compose up -d kafka
+```
+
+## GCP Examples
+
+You can manage GCP emulators from:
+
+```text
+http://localhost:8085/gcp/pubsub
+http://localhost:8085/gcp/storage
+http://localhost:8085/gcp/firestore
+```
+
+Start Pub/Sub, Cloud Storage, and Firestore through the app:
+
+```bash
+curl -X POST http://localhost:8085/gcp/pubsub/start
+curl -X POST http://localhost:8085/gcp/storage/start
+curl -X POST http://localhost:8085/gcp/firestore/start
+```
+
+Create a Pub/Sub topic and subscription:
+
+```bash
+curl -X POST "http://localhost:8085/gcp/pubsub/topics?topicName=orders-created"
+curl -X POST \
+  "http://localhost:8085/gcp/pubsub/subscriptions?subscriptionName=orders-worker&topicName=orders-created"
+```
+
+Publish a Pub/Sub message:
+
+```bash
+curl -X POST \
+  -H "Content-Type: text/plain" \
+  --data "hello from pubsub" \
+  http://localhost:8085/gcp/pubsub/topics/orders-created/publish
+```
+
+Create a Cloud Storage bucket and upload a text object:
+
+```bash
+curl -X POST "http://localhost:8085/gcp/storage/buckets?bucketName=orders-data"
+curl -X POST \
+  -H "Content-Type: text/plain" \
+  --data "hello from gcs" \
+  "http://localhost:8085/gcp/storage/buckets/orders-data/objects?objectName=sample.txt"
+```
+
+Upload a file directly:
+
+```bash
+curl -X POST \
+  -F "file=@/path/to/report.pdf" \
+  -F "objectName=reports/report.pdf" \
+  http://localhost:8085/gcp/storage/buckets/orders-data/objects/file
+```
+
+Download a Cloud Storage object:
+
+```bash
+curl -OJ "http://localhost:8085/gcp/storage/buckets/orders-data/objects/download?objectName=sample.txt"
+```
+
+List GCP resources:
+
+```bash
+curl http://localhost:8085/gcp/pubsub/topics
+curl http://localhost:8085/gcp/pubsub/subscriptions
+curl http://localhost:8085/gcp/storage/buckets
+curl http://localhost:8085/gcp/storage/buckets/orders-data/objects
+```
+
+Create a Firestore document:
+
+```bash
+curl -X POST \
+  -H "Content-Type: text/plain" \
+  --data '{"status":"created","total":25}' \
+  "http://localhost:8085/gcp/firestore/collections/orders/documents?documentName=order-1"
+```
+
+List Firestore collections and documents:
+
+```bash
+curl http://localhost:8085/gcp/firestore/collections
+curl http://localhost:8085/gcp/firestore/collections/orders/documents
+```
+
+Delete a Firestore document:
+
+```bash
+curl -X DELETE http://localhost:8085/gcp/firestore/collections/orders/documents/order-1
 ```
 
 ## Mock HTTP Examples
@@ -291,6 +550,31 @@ If Redis calls fail, start Redis:
 ```bash
 docker compose up -d redis
 curl http://localhost:8085/redis/health
+```
+
+If MongoDB calls fail, start MongoDB:
+
+```bash
+docker compose up -d mongodb
+curl http://localhost:8085/mongodb/status
+```
+
+If Kafka calls fail, start Kafka:
+
+```bash
+docker compose up -d kafka
+curl http://localhost:8085/kafka/status
+```
+
+If GCP emulator calls fail, start the needed emulator:
+
+```bash
+docker compose up -d gcp-pubsub
+docker compose up -d gcp-storage
+docker compose up -d gcp-firestore
+curl http://localhost:8085/gcp/pubsub/status
+curl http://localhost:8085/gcp/storage/status
+curl http://localhost:8085/gcp/firestore/status
 ```
 
 If a mock HTTP server cannot start, the chosen port is probably already in use. Stop that process or choose a different port.

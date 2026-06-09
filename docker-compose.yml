@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   localstack:
     container_name: "${LOCALSTACK_DOCKER_NAME-localstack_main}"
@@ -19,3 +17,56 @@ services:
     image: redis:7.2-alpine
     ports:
       - "127.0.0.1:6379:6379"
+  mongodb:
+    container_name: mongodb_main
+    image: mongo:7
+    ports:
+      - "127.0.0.1:27017:27017"
+    volumes:
+      - mongo_data:/data/db
+  kafka:
+    container_name: kafka_main
+    image: apache/kafka:3.9.2
+    ports:
+      - "127.0.0.1:9092:9092"
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://localhost:9092,CONTROLLER://localhost:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+  gcp-pubsub:
+    container_name: gcp_pubsub_main
+    image: gcr.io/google.com/cloudsdktool/google-cloud-cli:emulators
+    command: gcloud beta emulators pubsub start --project=localstack-ui --host-port=0.0.0.0:8681
+    environment:
+      CLOUDSDK_AUTH_DISABLE_CREDENTIALS: "true"
+      CLOUDSDK_CORE_PROJECT: localstack-ui
+      CLOUDSDK_API_ENDPOINT_OVERRIDES_PUBSUB: "http://localhost:8681/"
+      PUBSUB_EMULATOR_HOST: "localhost:8681"
+    ports:
+      - "127.0.0.1:8681:8681"
+  gcp-storage:
+    container_name: gcp_storage_main
+    image: fsouza/fake-gcs-server:latest
+    command: -scheme http -host 0.0.0.0 -port 4443 -external-url http://localhost:4443 -backend filesystem -data /storage
+    ports:
+      - "127.0.0.1:4443:4443"
+    volumes:
+      - gcp_storage_data:/storage
+  gcp-firestore:
+    container_name: gcp_firestore_main
+    image: gcr.io/google.com/cloudsdktool/google-cloud-cli:emulators
+    command: gcloud beta emulators firestore start --project=localstack-ui --host-port=0.0.0.0:8787
+    ports:
+      - "127.0.0.1:8787:8787"
+
+volumes:
+  mongo_data:
+  gcp_storage_data:
