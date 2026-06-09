@@ -20,12 +20,18 @@
         </div>
     </div>
 
+    <div id="redisMessage" class="mb-3"></div>
+
     <div class="row">
         <div class="col-lg-5 mb-4">
             <div class="card app-panel">
                 <div class="card-header">Keys</div>
                 <div class="card-body">
-                    <button id="refreshRedis" class="btn btn-secondary btn-sm mb-3">Refresh</button>
+                    <div class="action-row mb-3">
+                        <button id="refreshRedis" class="btn btn-secondary">Refresh</button>
+                        <button id="startRedis" class="btn btn-primary" style="display: none;">Start Redis</button>
+                        <button id="stopRedis" class="btn btn-danger" style="display: none;">Stop Redis</button>
+                    </div>
                     <div id="redisStatus" class="mb-3"></div>
                     <div id="redisKeyList"></div>
                 </div>
@@ -37,15 +43,15 @@
                 <div class="card-body">
                     <div class="form-group">
                         <label for="redisKey">Key</label>
-                        <input id="redisKey" type="text" class="form-control" aria-label="redis key">
+                        <input id="redisKey" type="text" class="form-control" aria-label="redis key" disabled>
                     </div>
                     <div class="form-group">
                         <label for="redisValue">Value</label>
-                        <textarea id="redisValue" class="form-control" rows="8" aria-label="redis value"></textarea>
+                        <textarea id="redisValue" class="form-control" rows="8" aria-label="redis value" disabled></textarea>
                     </div>
                     <div class="action-row">
-                        <button id="saveRedis" class="btn btn-primary">Save</button>
-                        <button id="deleteRedis" class="btn btn-danger">Delete</button>
+                        <button id="saveRedis" class="btn btn-primary" disabled>Save</button>
+                        <button id="deleteRedis" class="btn btn-danger" disabled>Delete</button>
                     </div>
                 </div>
             </div>

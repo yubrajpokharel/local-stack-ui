@@ -32,6 +32,7 @@ public class SQSController {
     model.addAttribute("sqsQueue", queueUrl);
     model.addAttribute("sqsQueueUrl", fullQueueUrl);
     model.addAttribute("sqsCreatedOn", sqsService.getCreatedOn(fullQueueUrl));
+    model.addAttribute("sqsQueueType", sqsService.getQueueType(fullQueueUrl));
     model.addAttribute("messages", messages);
     return "indSqsPage";
   }

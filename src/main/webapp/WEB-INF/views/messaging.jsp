@@ -21,6 +21,20 @@
         </div>
     </div>
 
+    <div id="awsMessage" class="mb-3"></div>
+
+    <div class="card app-panel">
+        <div class="card-header">AWS LocalStack</div>
+        <div class="card-body">
+            <div id="awsStatus" class="mb-3"></div>
+            <div class="action-row">
+                <button id="refreshAws" class="btn btn-secondary">Refresh</button>
+                <button id="startAws" class="btn btn-primary" style="display: none;">Start AWS Services</button>
+                <button id="stopAws" class="btn btn-danger" style="display: none;">Stop AWS Services</button>
+            </div>
+        </div>
+    </div>
+
     <div class="row">
         <div class="col-lg-6">
             <div class="card app-panel">
@@ -76,6 +90,13 @@
                             <span class="input-group-text">New Queue name</span>
                         </div>
                         <input id="queueName" type="text" aria-label="queue name" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="queueType">Queue type</label>
+                        <select class="form-control" id="queueType">
+                            <option value="Standard">Standard</option>
+                            <option value="FIFO">FIFO</option>
+                        </select>
                     </div>
                     <button id="createQueue" href="#" class="btn btn-primary">Create</button>
                 </div>

@@ -3,6 +3,11 @@ package com.tools.localstackui.services;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +32,21 @@ public class RedisService {
 
   public String ping() {
     return redisTemplate.execute((RedisCallback<String>) connection -> connection.ping());
+  }
+
+  public Map<String, Object> getStatus() {
+    Map<String, Object> response = new LinkedHashMap<>();
+    response.put("uri", "redis://" + redisHost + ":" + redisPort);
+    try {
+      response.put("response", ping());
+      response.put("running", true);
+      response.put("status", "UP");
+    } catch (Exception e) {
+      response.put("running", false);
+      response.put("status", "DOWN");
+      response.put("message", e.getMessage());
+    }
+    return response;
   }
 
   public List<String> getKeys() {
@@ -57,5 +77,44 @@ public class RedisService {
 
   public Boolean delete(String key) {
     return redisTemplate.delete(key);
+  }
+
+  public String startRedis() throws IOException, InterruptedException {
+    return runDockerCompose("up", "-d", "redis");
+  }
+
+  public String stopRedis() throws IOException, InterruptedException {
+    return runDockerCompose("stop", "redis");
+  }
+
+  private String runDockerCompose(String... arguments) throws IOException, InterruptedException {
+    List<String> command = new ArrayList<>();
+    command.add("docker");
+    command.add("compose");
+    command.addAll(List.of(arguments));
+    ProcessBuilder processBuilder = new ProcessBuilder(command);
+    processBuilder.redirectErrorStream(true);
+    Process process = processBuilder.start();
+    StringBuilder output = new StringBuilder();
+    try (BufferedReader reader = new BufferedReader(
+        new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))) {
+      String line;
+      while ((line = reader.readLine()) != null) {
+        output.append(line).append("\n");
+      }
+    }
+    int exitCode = process.waitFor();
+    if (exitCode != 0) {
+      throw new IOException(formatDockerComposeError(exitCode, output.toString()));
+    }
+    return output.toString().trim();
+  }
+
+  private String formatDockerComposeError(int exitCode, String output) {
+    if (output.contains("Cannot connect to the Docker daemon")) {
+      return "Docker is not running. Start Docker Desktop and retry Redis. Details: "
+          + output.trim();
+    }
+    return "docker compose exited with code " + exitCode + ": " + output;
   }
 }

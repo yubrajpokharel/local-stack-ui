@@ -33,6 +33,7 @@
                         <div class="card-header">Queue Details</div>
                         <div class="card-body">
                             <div><strong>QueueName:</strong> <span class="code-cell">${sqsQueue}</span></div>
+                            <div><strong>Type:</strong> <span class="badge badge-light">${sqsQueueType}</span></div>
                             <div><strong>URL:</strong> <span class="code-cell">${sqsQueueUrl}</span></div>
                             <div><strong>CreatedOn:</strong> <span class="code-cell">${sqsCreatedOn}</span></div>
                         </div>
@@ -44,8 +45,19 @@
                         <div class="card-body">
                             <h5>Send Message</h5>
                             <input type="hidden" id="queueName" value="${sqsQueue}">
+                            <input type="hidden" id="queueType" value="${sqsQueueType}">
                             <div class="form-group">
                                 <textarea class="form-control compact-textarea" id="sqsMessageBox" rows="7"></textarea>
+                            </div>
+                            <div id="fifoFields" style="display: none">
+                                <div class="form-group">
+                                    <label for="messageGroupId">Message group ID</label>
+                                    <input class="form-control" id="messageGroupId" value="default">
+                                </div>
+                                <div class="form-group">
+                                    <label for="messageDeduplicationId">Deduplication ID</label>
+                                    <input class="form-control" id="messageDeduplicationId">
+                                </div>
                             </div>
                             <button type="button" class="btn btn-primary" id="sendSqsMessage">Send</button>
                             <div class="alert alert-success mt-3" id="sqsSendResult" style="display: none">

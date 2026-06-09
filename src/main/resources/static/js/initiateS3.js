@@ -1,7 +1,82 @@
 $(document).ready(function () {
+  var message = $('#awsMessage');
+  var status = $('#awsStatus');
+  var startButton = $('#startAws');
+  var stopButton = $('#stopAws');
+  var bucketNameInput = $('#bucketName');
+  var createBucketButton = $('#createBucket');
   var bucketList = $('#bucketList');
 
-  apiCall("/s3-buckets", bucketList);
+  refreshAws();
+
+  $('#refreshAws').click(function () {
+    refreshAws();
+  });
+
+  startButton.click(function () {
+    showMessage("Starting AWS services...", "info");
+    $.ajax({
+      url: "/localstack/start",
+      method: "POST",
+      dataType: "json"
+    }).done(function (msg) {
+      showMessage(msg.message || msg.status, msg.status == "success" ? "success" : "danger");
+      setTimeout(refreshAws, 3000);
+    }).fail(function (jqXHR, textStatus) {
+      showMessage("Request failed: " + textStatus, "danger");
+    });
+  });
+
+  stopButton.click(function () {
+    showMessage("Stopping AWS services...", "info");
+    $.ajax({
+      url: "/localstack/stop",
+      method: "POST",
+      dataType: "json"
+    }).done(function (msg) {
+      showMessage(msg.message || msg.status, msg.status == "success" ? "success" : "danger");
+      if (msg.status == "success") {
+        setAwsUnavailable("AWS services are not running.");
+      }
+      setTimeout(refreshAws, 1200);
+    }).fail(function (jqXHR, textStatus) {
+      showMessage("Request failed: " + textStatus, "danger");
+    });
+  });
+
+  function refreshAws() {
+    $.ajax({
+      url: "/localstack/status",
+      method: "GET",
+      dataType: "json"
+    }).done(function (msg) {
+      if (msg.running) {
+        status.html("<span class='badge badge-success'>Connected</span>"
+            + "<span class='resource-meta'>URL: " + escapeHtml(msg.uri) + "</span>");
+        setAwsControls(true);
+        apiCall("/s3-buckets", bucketList);
+      } else {
+        status.html("<span class='badge badge-danger'>Unavailable</span>"
+            + "<span class='resource-meta'>URL: " + escapeHtml(msg.uri) + "</span>");
+        setAwsUnavailable("AWS services are not running.");
+      }
+    }).fail(function () {
+      status.html("<span class='badge badge-danger'>Unavailable</span>");
+      setAwsUnavailable("AWS status check failed.");
+    });
+  }
+
+  function setAwsUnavailable(text) {
+    setAwsControls(false);
+    bucketList.html("<div class='empty-state'>" + escapeHtml(text) + "</div>");
+  }
+
+  function setAwsControls(isRunning) {
+    startButton.toggle(!isRunning);
+    stopButton.toggle(isRunning);
+    bucketNameInput.prop('disabled', !isRunning);
+    createBucketButton.prop('disabled', !isRunning);
+  }
 
   function apiCall(url, snsList) {
     $.ajax({
@@ -25,7 +100,7 @@ $(document).ready(function () {
       listElement = listElement + "</ul>";
       snsList.html(listElement);
     }).fail(function (jqXHR, textStatus) {
-      console.log("Request failed: " + textStatus);
+      showMessage("Request failed: " + textStatus, "danger");
     });
   }
 
@@ -66,18 +141,18 @@ $(document).ready(function () {
       console.log("successfully deleted!");
       apiCall("/s3-buckets", bucketList);
     }).fail(function (jqXHR, textStatus) {
-      console.log("Request failed: " + textStatus);
+      showMessage("Request failed: " + textStatus, "danger");
     });
   });
 
   $('#createBucket').click(function () {
-    var bucketName = $('#bucketName').val();
+    var bucketName = bucketNameInput.val();
     if (bucketName.length != 0) {
       var endPointToCreateQueue = "/s3-buckets/create/" + bucketName;
       create(endPointToCreateQueue);
-      $('#bucketName').val("");
+      bucketNameInput.val("");
     } else {
-      alert("queue name cannot be empty");
+      showMessage("Bucket name cannot be empty.", "warning");
     }
   });
 
@@ -90,7 +165,20 @@ $(document).ready(function () {
       console.log(msg);
       apiCall("/s3-buckets", bucketList);
     }).fail(function (jqXHR, textStatus) {
-      alert("Request failed: " + textStatus);
+      showMessage("Request failed: " + textStatus, "danger");
     });
+  }
+
+  function showMessage(text, type) {
+    message.html("<div class='alert alert-" + type + "'>" + escapeHtml(text) + "</div>");
+  }
+
+  function escapeHtml(value) {
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
   }
 });

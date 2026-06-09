@@ -6,6 +6,7 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -94,5 +95,16 @@ public class S3Service {
     String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
     amazonS3.deleteObject(new DeleteObjectRequest(bucketName, fileName));
     return "Successfully deleted";
+  }
+
+  public S3ObjectDownload downloadFile(String bucketName, String fileName) throws IOException {
+    try (S3Object s3Object = amazonS3.getObject(bucketName, fileName)) {
+      String contentType = s3Object.getObjectMetadata().getContentType();
+      byte[] content = s3Object.getObjectContent().readAllBytes();
+      return new S3ObjectDownload(content, contentType == null ? "application/octet-stream" : contentType);
+    }
+  }
+
+  public record S3ObjectDownload(byte[] content, String contentType) {
   }
 }
