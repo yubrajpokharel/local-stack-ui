@@ -222,6 +222,68 @@ a {
   gap: 8px;
 }
 
+.command-toggle {
+  align-items: center;
+  color: #475569;
+  display: inline-flex;
+  font-size: 0.86rem;
+  font-weight: 600;
+  gap: 6px;
+  margin: 0 0 0 auto;
+  white-space: nowrap;
+}
+
+.command-hint {
+  background: #0f172a;
+  border-radius: 6px;
+  color: #e2e8f0;
+  display: none;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  margin: 8px 0 0;
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 9px 10px;
+  white-space: pre-wrap;
+  width: 100%;
+}
+
+body.command-hints-visible .command-hint {
+  display: block;
+}
+
+.command-reference {
+  background: #0f172a;
+  border-radius: 6px;
+  color: #e2e8f0;
+  font-size: 0.84rem;
+  line-height: 1.5;
+  margin: 0;
+  overflow-x: auto;
+  padding: 12px;
+  white-space: pre-wrap;
+}
+
+.command-output {
+  background: #0f172a;
+  border-radius: 8px;
+  color: #e2e8f0;
+  font-size: 0.86rem;
+  line-height: 1.5;
+  margin: 0;
+  min-height: 480px;
+  overflow: auto;
+  padding: 14px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.command-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .empty-state {
   background: #ffffff;
   border: 1px dashed #cbd5e1;

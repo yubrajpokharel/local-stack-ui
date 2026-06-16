@@ -59,7 +59,8 @@
                                     <input class="form-control" id="messageDeduplicationId">
                                 </div>
                             </div>
-                            <button type="button" class="btn btn-primary" id="sendSqsMessage">Send</button>
+                            <button type="button" class="btn btn-primary" id="sendSqsMessage"
+                                    data-command-template="awslocal sqs send-message --queue-url ${sqsQueueUrl} --message-body '{#sqsMessageBox}'">Send</button>
                             <div class="alert alert-success mt-3" id="sqsSendResult" style="display: none">
                                 Message ID : <span id="sqsMessageId"></span>
                             </div>
@@ -103,5 +104,6 @@
         </div>
     </body>
     <script src="/webjars/jquery/3.4.1/jquery.min.js"></script>
+    <script type="text/javascript" src="/resources/js/commandHints.js"></script>
     <script type="text/javascript" src="/resources/js/indSqsPage.js"></script>
 </html>

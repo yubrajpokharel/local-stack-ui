@@ -29,9 +29,12 @@
                 <div class="card-body">
                     <div id="kafkaStatus" class="mb-3"></div>
                     <div class="action-row">
-                        <button id="refreshKafka" class="btn btn-secondary">Refresh</button>
-                        <button id="startKafka" class="btn btn-primary" style="display: none;">Start Kafka</button>
-                        <button id="stopKafka" class="btn btn-danger" style="display: none;">Stop Kafka</button>
+                        <button id="refreshKafka" class="btn btn-secondary"
+                                data-command="docker compose exec kafka /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --list">Refresh</button>
+                        <button id="startKafka" class="btn btn-primary" style="display: none;"
+                                data-command="docker compose up -d kafka">Start Kafka</button>
+                        <button id="stopKafka" class="btn btn-danger" style="display: none;"
+                                data-command="docker compose stop kafka">Stop Kafka</button>
                     </div>
                 </div>
             </div>
@@ -50,7 +53,8 @@
                         <label for="kafkaReplicationFactor">Replication factor</label>
                         <input id="kafkaReplicationFactor" class="form-control" type="number" min="1" value="1" disabled>
                     </div>
-                    <button id="createKafkaTopic" class="btn btn-primary" disabled>Create Topic</button>
+                    <button id="createKafkaTopic" class="btn btn-primary" disabled
+                            data-command-template="docker compose exec kafka /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --create --if-not-exists --topic {#kafkaTopicName} --partitions {#kafkaPartitions} --replication-factor {#kafkaReplicationFactor}">Create Topic</button>
                 </div>
             </div>
         </div>
@@ -66,5 +70,6 @@
 </div>
 </body>
 <script src="/webjars/jquery/3.4.1/jquery.min.js"></script>
+<script type="text/javascript" src="/resources/js/commandHints.js"></script>
 <script type="text/javascript" src="resources/js/kafka.js"></script>
 </html>

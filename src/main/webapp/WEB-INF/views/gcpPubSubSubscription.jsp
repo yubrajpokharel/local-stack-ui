@@ -43,7 +43,8 @@
                         <label for="subscriptionMessageBody">Message</label>
                         <textarea id="subscriptionMessageBody" class="form-control compact-textarea" rows="7"></textarea>
                     </div>
-                    <button id="sendSubscriptionMessage" type="button" class="btn btn-primary" disabled>Send</button>
+                    <button id="sendSubscriptionMessage" type="button" class="btn btn-primary" disabled
+                            data-command-template="docker compose exec gcp-pubsub env PUBSUB_EMULATOR_HOST=localhost:8681 CLOUDSDK_API_ENDPOINT_OVERRIDES_PUBSUB=http://localhost:8681/ gcloud pubsub topics publish {#subscriptionTopic} --message='{#subscriptionMessageBody}' --project=localstack-ui">Send</button>
                 </div>
             </div>
         </div>
@@ -51,7 +52,8 @@
             <div class="card app-panel">
                 <div class="card-header">
                     <span>Messages</span>
-                    <button id="pollPubSubMessages" type="button" class="btn btn-secondary btn-sm">
+                    <button id="pollPubSubMessages" type="button" class="btn btn-secondary btn-sm"
+                            data-command-template="curl -X POST http://localhost:8681/v1/projects/localstack-ui/subscriptions/{#subscriptionName}:pull -H 'Authorization: Bearer owner' -H 'Content-Type: application/json' -d '{&quot;maxMessages&quot;:10,&quot;returnImmediately&quot;:true}'">
                         Poll Messages
                     </button>
                 </div>
@@ -81,5 +83,6 @@
 </div>
 </body>
 <script src="/webjars/jquery/3.4.1/jquery.min.js"></script>
+<script type="text/javascript" src="/resources/js/commandHints.js"></script>
 <script type="text/javascript" src="/resources/js/gcpPubSubSubscription.js"></script>
 </html>

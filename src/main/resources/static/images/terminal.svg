@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Command Runner">
+  <rect x="12" y="22" width="104" height="84" rx="10" fill="#0f172a"/>
+  <rect x="18" y="28" width="92" height="72" rx="6" fill="#111827"/>
+  <circle cx="30" cy="40" r="4" fill="#ef4444"/>
+  <circle cx="44" cy="40" r="4" fill="#f59e0b"/>
+  <circle cx="58" cy="40" r="4" fill="#22c55e"/>
+  <path d="M30 62l14 12-14 12" fill="none" stroke="#38bdf8" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M56 86h34" fill="none" stroke="#e2e8f0" stroke-width="8" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="RabbitMQ">
+  <rect x="15" y="28" width="98" height="72" rx="10" fill="#f97316"/>
+  <rect x="30" y="15" width="14" height="36" rx="4" fill="#f97316"/>
+  <rect x="55" y="15" width="14" height="36" rx="4" fill="#f97316"/>
+  <rect x="35" y="58" width="18" height="18" rx="3" fill="#ffffff"/>
+  <rect x="62" y="58" width="18" height="18" rx="3" fill="#ffffff"/>
+  <rect x="89" y="58" width="18" height="18" rx="3" fill="#ffffff"/>
+  <path d="M31 89h68" fill="none" stroke="#ffffff" stroke-linecap="round" stroke-width="8"/>
+</svg>

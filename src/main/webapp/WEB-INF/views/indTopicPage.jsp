@@ -45,7 +45,8 @@
                                 <tr>
                                     <th scope="row">${loop.index}</th>
                                     <td class="code-cell"><b>${subscription.key}</b></td>
-                                    <td><button id="${subscription.key}" data-id="${subscription.key}" data-name="${subscription.value}" type="button" class="btn btn-danger btn-sm removeSubsription">Remove</button>
+                                    <td><button id="${subscription.key}" data-id="${subscription.key}" data-name="${subscription.value}" type="button" class="btn btn-danger btn-sm removeSubsription"
+                                                data-command="awslocal sns unsubscribe --subscription-arn ${subscription.value}">Remove</button>
                                     </td>
                                 </tr>
                             </c:forEach>
@@ -67,7 +68,8 @@
                         <textarea class="form-control compact-textarea" id="messageBox" rows="8"></textarea>
                         <input type="hidden" id="topicArn" value="${topicArn}">
                     </div>
-                    <button type="button" class="btn btn-primary" id="sendMessage">Send</button>
+                    <button type="button" class="btn btn-primary" id="sendMessage"
+                            data-command-template="awslocal sns publish --topic-arn ${topicArn} --message '{#topicMessageBox}'">Send</button>
                     <div class="alert alert-success mt-3" id="messageResult" style="display: none">
                         Message ID : <span id="messageId"></span>
                     </div>
@@ -78,6 +80,7 @@
 </div>
 
 <script src="/webjars/jquery/3.4.1/jquery.min.js"></script>
+<script type="text/javascript" src="/resources/js/commandHints.js"></script>
 <script type="text/javascript">
   $(document).ready(function () {
     var messageArea = $("#messageId");

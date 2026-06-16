@@ -40,8 +40,10 @@
                         <textarea id="mockResponse" class="form-control" rows="8" aria-label="mock response">ok</textarea>
                     </div>
                     <div class="action-row">
-                        <button id="startMock" class="btn btn-primary">Start</button>
-                        <button id="restartMock" class="btn btn-secondary">Restart</button>
+                        <button id="startMock" class="btn btn-primary"
+                                data-command-template="curl -X POST 'http://localhost:8085/mock-http/start?name={#mockName}&amp;port={#mockPort}&amp;response={#mockResponse}'">Start</button>
+                        <button id="restartMock" class="btn btn-secondary"
+                                data-command-template="curl -X POST 'http://localhost:8085/mock-http/restart?name={#mockName}&amp;port={#mockPort}&amp;response={#mockResponse}'">Restart</button>
                     </div>
                 </div>
             </div>
@@ -54,8 +56,10 @@
                 </div>
                 <div class="card-body">
                     <div class="action-row mb-3">
-                        <button id="refreshMocks" class="btn btn-secondary btn-sm">Refresh</button>
-                        <button id="stopAllMocks" class="btn btn-danger btn-sm">Stop all</button>
+                        <button id="refreshMocks" class="btn btn-secondary btn-sm"
+                                data-command="curl http://localhost:8085/mock-http/servers">Refresh</button>
+                        <button id="stopAllMocks" class="btn btn-danger btn-sm"
+                                data-command="curl -X POST http://localhost:8085/mock-http/stop-all">Stop all</button>
                     </div>
                     <div id="mockServerList"></div>
                 </div>
@@ -65,5 +69,6 @@
 </div>
 </body>
 <script src="/webjars/jquery/3.4.1/jquery.min.js"></script>
+<script type="text/javascript" src="/resources/js/commandHints.js"></script>
 <script type="text/javascript" src="resources/js/mockHttp.js"></script>
 </html>

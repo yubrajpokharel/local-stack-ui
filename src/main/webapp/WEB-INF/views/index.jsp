@@ -41,6 +41,12 @@
                     <span class="badge badge-primary">S3</span>
                 </a>
             </div>
+            <div class="col-lg-3 col-md-4 col-6">
+                <a href="/kubernetes/aws" class="service-tile">
+                    <img class="img-fluid" alt="AWS Kubernetes" src="resources/images/kubernetes.svg" /> <br>
+                    <span class="badge badge-primary">AWS Kubernetes</span>
+                </a>
+            </div>
         </div>
     </section>
 
@@ -66,6 +72,12 @@
                 <a href="/kafka" class="service-tile">
                     <img class="img-fluid" alt="Kafka" src="resources/images/kafka.svg" /> <br>
                     <span class="badge badge-primary">Kafka</span>
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-4 col-6">
+                <a href="/rabbitmq" class="service-tile">
+                    <img class="img-fluid" alt="RabbitMQ" src="resources/images/rabbitmq.svg" /> <br>
+                    <span class="badge badge-primary">RabbitMQ</span>
                 </a>
             </div>
         </div>
@@ -95,6 +107,12 @@
                     <span class="badge badge-primary">Firestore</span>
                 </a>
             </div>
+            <div class="col-lg-3 col-md-4 col-6">
+                <a href="/kubernetes/gcp" class="service-tile">
+                    <img class="img-fluid" alt="GCP Kubernetes" src="resources/images/kubernetes.svg" /> <br>
+                    <span class="badge badge-primary">GCP Kubernetes</span>
+                </a>
+            </div>
         </div>
     </section>
 
@@ -108,6 +126,12 @@
                 <a href="/mock-http" class="service-tile">
                     <img class="img-fluid" alt="Mock HTTP" src="resources/images/http.png" /> <br>
                     <span class="badge badge-primary">Mock HTTP</span>
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-4 col-6">
+                <a href="/command-runner" class="service-tile">
+                    <img class="img-fluid" alt="Command Runner" src="resources/images/terminal.svg" /> <br>
+                    <span class="badge badge-primary">Command Runner</span>
                 </a>
             </div>
         </div>

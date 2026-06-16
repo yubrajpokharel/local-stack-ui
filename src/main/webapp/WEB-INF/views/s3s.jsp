@@ -27,9 +27,12 @@
         <div class="card-body">
             <div id="awsStatus" class="mb-3"></div>
             <div class="action-row">
-                <button id="refreshAws" class="btn btn-secondary">Refresh</button>
-                <button id="startAws" class="btn btn-primary" style="display: none;">Start AWS Services</button>
-                <button id="stopAws" class="btn btn-danger" style="display: none;">Stop AWS Services</button>
+                <button id="refreshAws" class="btn btn-secondary"
+                        data-command="curl http://localhost:8085/localstack/status">Refresh</button>
+                <button id="startAws" class="btn btn-primary" style="display: none;"
+                        data-command="docker compose up -d localstack">Start AWS Services</button>
+                <button id="stopAws" class="btn btn-danger" style="display: none;"
+                        data-command="docker compose stop localstack">Stop AWS Services</button>
             </div>
         </div>
     </div>
@@ -58,7 +61,8 @@
                         </div>
                         <input id="bucketName" type="text" aria-label="bucket name" class="form-control">
                     </div>
-                    <button id="createBucket" href="#" class="btn btn-primary">Create</button>
+                    <button id="createBucket" href="#" class="btn btn-primary"
+                            data-command-template="awslocal s3 mb s3://{#bucketName}">Create</button>
                 </div>
             </div>
         </div>
@@ -66,5 +70,6 @@
 </div>
 </body>
 <script src="/webjars/jquery/3.4.1/jquery.min.js"></script>
+<script type="text/javascript" src="/resources/js/commandHints.js"></script>
 <script type="text/javascript" src="resources/js/initiateS3.js"></script>
 </html>

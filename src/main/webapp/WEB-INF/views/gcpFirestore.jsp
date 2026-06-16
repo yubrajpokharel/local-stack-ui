@@ -29,9 +29,12 @@
                 <div class="card-body">
                     <div id="firestoreStatus" class="mb-3"></div>
                     <div class="action-row">
-                        <button id="refreshFirestore" class="btn btn-secondary">Refresh</button>
-                        <button id="startFirestore" class="btn btn-primary" style="display: none;">Start Firestore</button>
-                        <button id="stopFirestore" class="btn btn-danger" style="display: none;">Stop Firestore</button>
+                        <button id="refreshFirestore" class="btn btn-secondary"
+                                data-command="curl -X POST http://localhost:8787/v1/projects/localstack-ui/databases/(default)/documents:listCollectionIds -H 'Authorization: Bearer owner' -H 'Content-Type: application/json' -d '{&quot;pageSize&quot;:100}'">Refresh</button>
+                        <button id="startFirestore" class="btn btn-primary" style="display: none;"
+                                data-command="docker compose up -d gcp-firestore">Start Firestore</button>
+                        <button id="stopFirestore" class="btn btn-danger" style="display: none;"
+                                data-command="docker compose stop gcp-firestore">Stop Firestore</button>
                     </div>
                 </div>
             </div>
@@ -50,7 +53,8 @@
                         <label for="firestoreDocumentContent">JSON fields</label>
                         <textarea id="firestoreDocumentContent" class="form-control compact-textarea" rows="8" disabled>{"status":"created"}</textarea>
                     </div>
-                    <button id="createFirestoreDocument" class="btn btn-primary" disabled>Create Document</button>
+                    <button id="createFirestoreDocument" class="btn btn-primary" disabled
+                            data-command-template="curl -X POST 'http://localhost:8787/v1/projects/localstack-ui/databases/(default)/documents/{#firestoreCollectionName}?documentId={#firestoreDocumentName}' -H 'Authorization: Bearer owner' -H 'Content-Type: application/json' -d '{&quot;fields&quot;:{}}'">Create Document</button>
                 </div>
             </div>
         </div>
@@ -72,5 +76,6 @@
 </div>
 </body>
 <script src="/webjars/jquery/3.4.1/jquery.min.js"></script>
+<script type="text/javascript" src="/resources/js/commandHints.js"></script>
 <script type="text/javascript" src="/resources/js/gcpFirestore.js"></script>
 </html>

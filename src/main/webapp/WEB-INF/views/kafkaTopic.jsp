@@ -43,7 +43,8 @@
                         <label for="kafkaTopicMessageBody">Message</label>
                         <textarea id="kafkaTopicMessageBody" class="form-control compact-textarea" rows="7"></textarea>
                     </div>
-                    <button id="sendKafkaTopicMessage" type="button" class="btn btn-primary">Send</button>
+                    <button id="sendKafkaTopicMessage" type="button" class="btn btn-primary"
+                            data-command-template="printf '%s\n' '{#kafkaTopicMessageBody}' | docker compose exec -T kafka /opt/kafka/bin/kafka-console-producer.sh --bootstrap-server localhost:9092 --topic {#kafkaTopicName}">Send</button>
                 </div>
             </div>
         </div>
@@ -51,7 +52,8 @@
             <div class="card app-panel">
                 <div class="card-header">
                     <span>Partitions</span>
-                    <button id="refreshKafkaPartitions" type="button" class="btn btn-secondary btn-sm">
+                    <button id="refreshKafkaPartitions" type="button" class="btn btn-secondary btn-sm"
+                            data-command-template="docker compose exec kafka /opt/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --describe --topic {#kafkaTopicName}&#10;docker compose exec kafka /opt/kafka/bin/kafka-get-offsets.sh --bootstrap-server localhost:9092 --topic {#kafkaTopicName} --time -1">
                         Refresh
                     </button>
                 </div>
@@ -65,5 +67,6 @@
 </div>
 </body>
 <script src="/webjars/jquery/3.4.1/jquery.min.js"></script>
+<script type="text/javascript" src="/resources/js/commandHints.js"></script>
 <script type="text/javascript" src="/resources/js/kafkaTopic.js"></script>
 </html>

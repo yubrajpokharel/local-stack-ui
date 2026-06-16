@@ -49,6 +49,7 @@ curl http://localhost:4566/_localstack/health
 curl http://localhost:8085/redis/health
 curl http://localhost:8085/mongodb/status
 curl http://localhost:8085/kafka/status
+curl http://localhost:8085/rabbitmq/status
 curl http://localhost:8085/gcp/pubsub/status
 curl http://localhost:8085/gcp/storage/status
 curl http://localhost:8085/gcp/firestore/status
@@ -63,6 +64,7 @@ curl http://localhost:8085/gcp/firestore/status
 /redis        Redis key/value viewer
 /mongodb      MongoDB status and database viewer
 /kafka        Kafka status and topic viewer
+/rabbitmq     RabbitMQ queue and message viewer
 /gcp/pubsub   GCP Pub/Sub emulator
 /gcp/storage  GCP Cloud Storage emulator
 /gcp/firestore GCP Firestore emulator
@@ -94,6 +96,13 @@ kafka.docker.service=kafka
 kafka.topic.command=/opt/kafka/bin/kafka-topics.sh
 kafka.producer.command=/opt/kafka/bin/kafka-console-producer.sh
 kafka.offsets.command=/opt/kafka/bin/kafka-get-offsets.sh
+rabbitmq.host=localhost
+rabbitmq.port=5672
+rabbitmq.management.endpoint=http://localhost:15672
+rabbitmq.username=guest
+rabbitmq.password=guest
+rabbitmq.vhost=/
+rabbitmq.docker.service=rabbitmq
 gcp.project.id=localstack-ui
 gcp.pubsub.host=localhost
 gcp.pubsub.port=8681
@@ -117,6 +126,7 @@ LocalStack: http://localhost:4566
 Redis:      localhost:6379
 MongoDB:    mongodb://localhost:27017
 Kafka:     kafka://localhost:9092
+RabbitMQ:  amqp://localhost:5672, management http://localhost:15672
 GCP Pub/Sub:       pubsub://localhost:8681
 GCP Cloud Storage: http://localhost:4443
 GCP Firestore:     firestore://localhost:8787
@@ -392,6 +402,66 @@ You can also start Kafka directly:
 docker compose up -d kafka
 ```
 
+## RabbitMQ Examples
+
+You can manage RabbitMQ from:
+
+```text
+http://localhost:8085/rabbitmq
+```
+
+Check RabbitMQ status:
+
+```bash
+curl http://localhost:8085/rabbitmq/status
+```
+
+Start RabbitMQ on demand through the app:
+
+```bash
+curl -X POST http://localhost:8085/rabbitmq/start
+```
+
+Create a queue:
+
+```bash
+curl -X POST \
+  "http://localhost:8085/rabbitmq/queues?queueName=orders.created&durable=true&autoDelete=false&queueType=classic"
+```
+
+Publish a message to the queue:
+
+```bash
+curl -X POST \
+  -H "Content-Type: text/plain" \
+  --data "hello from rabbitmq" \
+  http://localhost:8085/rabbitmq/queues/orders.created/messages
+```
+
+Peek messages without deleting them:
+
+```bash
+curl "http://localhost:8085/rabbitmq/queues/orders.created/messages?count=10"
+```
+
+List queues:
+
+```bash
+curl http://localhost:8085/rabbitmq/queues
+```
+
+Stop RabbitMQ through the app:
+
+```bash
+curl -X POST http://localhost:8085/rabbitmq/stop
+```
+
+You can also start RabbitMQ directly:
+
+```bash
+docker compose up -d rabbitmq
+```
+
 ## GCP Examples
 
 You can manage GCP emulators from:
@@ -564,6 +634,13 @@ If Kafka calls fail, start Kafka:
 ```bash
 docker compose up -d kafka
 curl http://localhost:8085/kafka/status
+```
+
+If RabbitMQ calls fail, start RabbitMQ:
+
+```bash
+docker compose up -d rabbitmq
+curl http://localhost:8085/rabbitmq/status
 ```
 
 If GCP emulator calls fail, start the needed emulator:

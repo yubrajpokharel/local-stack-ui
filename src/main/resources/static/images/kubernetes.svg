@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Kubernetes">
+  <path fill="#326ce5" d="M64 6 14 35v58l50 29 50-29V35L64 6Z"/>
+  <path fill="#fff" d="m64 20 37 21v43l-37 21-37-21V41l37-21Zm0 10L36 46v32l28 16 28-16V46L64 30Z" opacity=".18"/>
+  <circle cx="64" cy="64" r="13" fill="#fff"/>
+  <path fill="#fff" d="M61 28h6l2 27H59l2-27Zm0 45h6l2 27h-8l-2-27Zm39-12v6l-27 2V59l27 2Zm-45 0v6l-27 2v-8l27-2Zm29-26 4 4-18 21-7-7 21-18ZM58 75l7 7-21 18-4-4 18-21Zm26 18 4-4-18-21-7 7 21 18ZM58 53l7-7-21-18-4 4 18 21Z"/>
+</svg>

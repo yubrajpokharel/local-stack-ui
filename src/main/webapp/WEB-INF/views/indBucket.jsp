@@ -73,7 +73,8 @@
                         <label for="file" class="sr-only">Select File: </label>
                         <input type="file" id="file" name="file" class="form-control-file">
                     </div>
-                    <button type="submit" class="btn btn-primary mb-2">Upload</button>
+                    <button type="submit" class="btn btn-primary mb-2"
+                            data-command="awslocal s3 cp /path/to/file s3://${bucketName}/file-name">Upload</button>
                 </form>
             </div>
             <div class="modal-footer">
@@ -87,6 +88,7 @@
 <script src="/webjars/jquery/3.4.1/jquery.min.js"></script>
 <script src="/webjars/popper.js/1.14.7/umd/popper.min.js"></script>
 <script src="/webjars/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/resources/js/commandHints.js"></script>
 
 <script type="text/javascript">
   $(document).ready(function () {

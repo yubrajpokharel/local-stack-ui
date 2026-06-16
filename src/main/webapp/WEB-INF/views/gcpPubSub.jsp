@@ -29,9 +29,12 @@
                 <div class="card-body">
                     <div id="pubsubStatus" class="mb-3"></div>
                     <div class="action-row">
-                        <button id="refreshPubSub" class="btn btn-secondary">Refresh</button>
-                        <button id="startPubSub" class="btn btn-primary" style="display: none;">Start Pub/Sub</button>
-                        <button id="stopPubSub" class="btn btn-danger" style="display: none;">Stop Pub/Sub</button>
+                        <button id="refreshPubSub" class="btn btn-secondary"
+                                data-command="curl http://localhost:8085/gcp/pubsub/status">Refresh</button>
+                        <button id="startPubSub" class="btn btn-primary" style="display: none;"
+                                data-command="docker compose up -d gcp-pubsub">Start Pub/Sub</button>
+                        <button id="stopPubSub" class="btn btn-danger" style="display: none;"
+                                data-command="docker compose stop gcp-pubsub">Stop Pub/Sub</button>
                     </div>
                 </div>
             </div>
@@ -42,7 +45,8 @@
                         <label for="pubsubTopicName">Topic name</label>
                         <input id="pubsubTopicName" class="form-control" type="text" placeholder="orders-created" disabled>
                     </div>
-                    <button id="createPubSubTopic" class="btn btn-primary" disabled>Create Topic</button>
+                    <button id="createPubSubTopic" class="btn btn-primary" disabled
+                            data-command-template="docker compose exec gcp-pubsub env PUBSUB_EMULATOR_HOST=localhost:8681 CLOUDSDK_API_ENDPOINT_OVERRIDES_PUBSUB=http://localhost:8681/ gcloud pubsub topics create {#pubsubTopicName} --project=localstack-ui">Create Topic</button>
                 </div>
             </div>
             <div class="card app-panel">
@@ -56,7 +60,8 @@
                         <label for="pubsubTopicOptions">Topic</label>
                         <select id="pubsubTopicOptions" class="form-control" disabled></select>
                     </div>
-                    <button id="createPubSubSubscription" class="btn btn-primary" disabled>Create Subscription</button>
+                    <button id="createPubSubSubscription" class="btn btn-primary" disabled
+                            data-command-template="docker compose exec gcp-pubsub env PUBSUB_EMULATOR_HOST=localhost:8681 CLOUDSDK_API_ENDPOINT_OVERRIDES_PUBSUB=http://localhost:8681/ gcloud pubsub subscriptions create {#pubsubSubscriptionName} --topic={#pubsubTopicOptions} --project=localstack-ui">Create Subscription</button>
                 </div>
             </div>
         </div>
@@ -84,7 +89,8 @@
                         <label for="pubsubMessageBody">Message</label>
                         <textarea id="pubsubMessageBody" class="form-control" rows="5" disabled></textarea>
                     </div>
-                    <button id="publishPubSubMessage" class="btn btn-primary" disabled>Publish Message</button>
+                    <button id="publishPubSubMessage" class="btn btn-primary" disabled
+                            data-command-template="docker compose exec gcp-pubsub env PUBSUB_EMULATOR_HOST=localhost:8681 CLOUDSDK_API_ENDPOINT_OVERRIDES_PUBSUB=http://localhost:8681/ gcloud pubsub topics publish {#pubsubPublishTopic} --message='{#pubsubMessageBody}' --project=localstack-ui">Publish Message</button>
                 </div>
             </div>
         </div>
@@ -92,5 +98,6 @@
 </div>
 </body>
 <script src="/webjars/jquery/3.4.1/jquery.min.js"></script>
+<script type="text/javascript" src="/resources/js/commandHints.js"></script>
 <script type="text/javascript" src="/resources/js/gcpPubSub.js"></script>
 </html>

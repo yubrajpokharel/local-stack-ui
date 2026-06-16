@@ -41,6 +41,17 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+  rabbitmq:
+    container_name: rabbitmq_main
+    image: rabbitmq:3.13-management
+    ports:
+      - "127.0.0.1:5672:5672"
+      - "127.0.0.1:15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
   gcp-pubsub:
     container_name: gcp_pubsub_main
     image: gcr.io/google.com/cloudsdktool/google-cloud-cli:emulators
@@ -69,4 +80,5 @@ services:
 
 volumes:
   mongo_data:
+  rabbitmq_data:
   gcp_storage_data:

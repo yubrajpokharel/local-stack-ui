@@ -41,7 +41,8 @@
                         <label for="topicMessageBody">Message</label>
                         <textarea id="topicMessageBody" class="form-control compact-textarea" rows="7"></textarea>
                     </div>
-                    <button id="sendTopicMessage" type="button" class="btn btn-primary">Send</button>
+                    <button id="sendTopicMessage" type="button" class="btn btn-primary"
+                            data-command-template="docker compose exec gcp-pubsub env PUBSUB_EMULATOR_HOST=localhost:8681 CLOUDSDK_API_ENDPOINT_OVERRIDES_PUBSUB=http://localhost:8681/ gcloud pubsub topics publish {#topicName} --message='{#topicMessageBody}' --project=localstack-ui">Send</button>
                 </div>
             </div>
         </div>
@@ -49,7 +50,8 @@
             <div class="card app-panel">
                 <div class="card-header">
                     <span>Subscriptions</span>
-                    <button id="refreshTopicSubscriptions" type="button" class="btn btn-secondary btn-sm">
+                    <button id="refreshTopicSubscriptions" type="button" class="btn btn-secondary btn-sm"
+                            data-command-template="docker compose exec gcp-pubsub env PUBSUB_EMULATOR_HOST=localhost:8681 CLOUDSDK_API_ENDPOINT_OVERRIDES_PUBSUB=http://localhost:8681/ gcloud pubsub subscriptions list --filter='topic:{#topicName}' --project=localstack-ui">
                         Refresh
                     </button>
                 </div>
@@ -76,5 +78,6 @@
 </div>
 </body>
 <script src="/webjars/jquery/3.4.1/jquery.min.js"></script>
+<script type="text/javascript" src="/resources/js/commandHints.js"></script>
 <script type="text/javascript" src="/resources/js/gcpPubSubTopic.js"></script>
 </html>

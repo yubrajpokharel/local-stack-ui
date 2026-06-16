@@ -29,9 +29,12 @@
                 <div class="card-body">
                     <div id="storageStatus" class="mb-3"></div>
                     <div class="action-row">
-                        <button id="refreshStorage" class="btn btn-secondary">Refresh</button>
-                        <button id="startStorage" class="btn btn-primary" style="display: none;">Start Storage</button>
-                        <button id="stopStorage" class="btn btn-danger" style="display: none;">Stop Storage</button>
+                        <button id="refreshStorage" class="btn btn-secondary"
+                                data-command="curl 'http://localhost:4443/storage/v1/b?project=localstack-ui'">Refresh</button>
+                        <button id="startStorage" class="btn btn-primary" style="display: none;"
+                                data-command="docker compose up -d gcp-storage">Start Storage</button>
+                        <button id="stopStorage" class="btn btn-danger" style="display: none;"
+                                data-command="docker compose stop gcp-storage">Stop Storage</button>
                     </div>
                 </div>
             </div>
@@ -42,7 +45,8 @@
                         <label for="storageBucketName">Bucket name</label>
                         <input id="storageBucketName" class="form-control" type="text" placeholder="orders-data" disabled>
                     </div>
-                    <button id="createStorageBucket" class="btn btn-primary" disabled>Create Bucket</button>
+                    <button id="createStorageBucket" class="btn btn-primary" disabled
+                            data-command-template="curl -X POST 'http://localhost:4443/storage/v1/b?project=localstack-ui' -H 'Content-Type: application/json' -d '{&quot;name&quot;:&quot;{#storageBucketName}&quot;}'">Create Bucket</button>
                 </div>
             </div>
             <div class="card app-panel">
@@ -60,7 +64,8 @@
                         <label for="storageObjectContent">Object content</label>
                         <textarea id="storageObjectContent" class="form-control" rows="5" disabled></textarea>
                     </div>
-                    <button id="uploadStorageObject" class="btn btn-primary" disabled>Upload Object</button>
+                    <button id="uploadStorageObject" class="btn btn-primary" disabled
+                            data-command-template="curl -X POST 'http://localhost:4443/upload/storage/v1/b/{#storageObjectBucket}/o?uploadType=media&amp;name={#storageObjectName}' -H 'Content-Type: text/plain' --data '{#storageObjectContent}'">Upload Object</button>
                 </div>
             </div>
             <div class="card app-panel">
@@ -78,7 +83,8 @@
                         <label for="storageFile">File</label>
                         <input id="storageFile" class="form-control-file" type="file" disabled>
                     </div>
-                    <button id="uploadStorageFile" class="btn btn-primary" disabled>Upload File</button>
+                    <button id="uploadStorageFile" class="btn btn-primary" disabled
+                            data-command-template="curl -X POST -F 'file=@/path/to/file' -F 'objectName={#storageFileObjectName}' http://localhost:8085/gcp/storage/buckets/{#storageFileBucket}/objects/file">Upload File</button>
                 </div>
             </div>
         </div>
@@ -100,5 +106,6 @@
 </div>
 </body>
 <script src="/webjars/jquery/3.4.1/jquery.min.js"></script>
+<script type="text/javascript" src="/resources/js/commandHints.js"></script>
 <script type="text/javascript" src="/resources/js/gcpStorage.js"></script>
 </html>

@@ -39,6 +39,11 @@ public class HomeController {
     return "mockHttp";
   }
 
+  @RequestMapping(value = "/command-runner", method = GET)
+  public String commandRunner(Model model) {
+    return "commandRunner";
+  }
+
   @RequestMapping(value = "/mongodb", method = GET)
   public String mongodb(Model model) {
     return "mongodb";
@@ -49,12 +54,38 @@ public class HomeController {
     return "kafka";
   }
 
+  @RequestMapping(value = "/rabbitmq", method = GET)
+  public String rabbitMq(Model model) {
+    return "rabbitmq";
+  }
+
   @RequestMapping(value = "/kafka/topics/{topicName}", method = GET)
   public String kafkaTopic(@PathVariable String topicName, Model model) {
     model.addAttribute("topicName", topicName);
     model.addAttribute("topicAddress", "localhost:9092/" + topicName);
     model.addAttribute("topicCreatedOn", "Unavailable");
     return "kafkaTopic";
+  }
+
+  @RequestMapping(value = "/kubernetes/aws", method = GET)
+  public String awsKubernetes(Model model) {
+    model.addAttribute("provider", "aws");
+    model.addAttribute("providerName", "AWS EKS");
+    model.addAttribute("connectCommand",
+        "aws eks update-kubeconfig --region &lt;region&gt; --name &lt;cluster-name&gt;");
+    model.addAttribute("listClustersCommand", "aws eks list-clusters --region &lt;region&gt;");
+    return "kubernetes";
+  }
+
+  @RequestMapping(value = "/kubernetes/gcp", method = GET)
+  public String gcpKubernetes(Model model) {
+    model.addAttribute("provider", "gcp");
+    model.addAttribute("providerName", "GCP GKE");
+    model.addAttribute("connectCommand",
+        "gcloud container clusters get-credentials &lt;cluster-name&gt; --region &lt;region&gt; --project &lt;project-id&gt;");
+    model.addAttribute("listClustersCommand",
+        "gcloud container clusters list --project &lt;project-id&gt;");
+    return "kubernetes";
   }
 
   @RequestMapping(value = "/gcp", method = GET)

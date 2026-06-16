@@ -29,9 +29,12 @@
                 <div class="card-body">
                     <div id="mongoStatus" class="mb-3"></div>
                     <div class="action-row">
-                        <button id="refreshMongo" class="btn btn-secondary">Refresh</button>
-                        <button id="startMongo" class="btn btn-primary" style="display: none;">Start MongoDB</button>
-                        <button id="stopMongo" class="btn btn-danger" style="display: none;">Stop MongoDB</button>
+                        <button id="refreshMongo" class="btn btn-secondary"
+                                data-command="mongosh mongodb://localhost:27017 --eval 'db.adminCommand({ ping: 1 })'">Refresh</button>
+                        <button id="startMongo" class="btn btn-primary" style="display: none;"
+                                data-command="docker compose up -d mongodb">Start MongoDB</button>
+                        <button id="stopMongo" class="btn btn-danger" style="display: none;"
+                                data-command="docker compose stop mongodb">Stop MongoDB</button>
                     </div>
                 </div>
             </div>
@@ -46,7 +49,8 @@
                         <label for="mongoCollectionName">First collection</label>
                         <input id="mongoCollectionName" class="form-control" type="text" placeholder="customers" disabled>
                     </div>
-                    <button id="createMongoDatabase" class="btn btn-primary" disabled>Create DB</button>
+                    <button id="createMongoDatabase" class="btn btn-primary" disabled
+                            data-command-template="mongosh mongodb://localhost:27017/{#mongoDatabaseName} --eval 'db.createCollection(&quot;{#mongoCollectionName}&quot;)'">Create DB</button>
                 </div>
             </div>
             <div class="card app-panel">
@@ -62,7 +66,8 @@
                         <label for="newMongoCollectionName">Collection name</label>
                         <input id="newMongoCollectionName" class="form-control" type="text" placeholder="invoices" disabled>
                     </div>
-                    <button id="createMongoCollection" class="btn btn-primary" disabled>Create Collection</button>
+                    <button id="createMongoCollection" class="btn btn-primary" disabled
+                            data-command-template="mongosh mongodb://localhost:27017/{#mongoCollectionDatabase} --eval 'db.createCollection(&quot;{#newMongoCollectionName}&quot;)'">Create Collection</button>
                 </div>
             </div>
         </div>
@@ -84,5 +89,6 @@
 </div>
 </body>
 <script src="/webjars/jquery/3.4.1/jquery.min.js"></script>
+<script type="text/javascript" src="/resources/js/commandHints.js"></script>
 <script type="text/javascript" src="resources/js/mongodb.js"></script>
 </html>
