@@ -42,6 +42,12 @@
                 </a>
             </div>
             <div class="col-lg-3 col-md-4 col-6">
+                <a href="/secrets-manager" class="service-tile">
+                    <img class="img-fluid" alt="Secrets Manager" src="resources/images/secrets.svg"> <br>
+                    <span class="badge badge-primary">Secrets Manager</span>
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-4 col-6">
                 <a href="/kubernetes/aws" class="service-tile">
                     <img class="img-fluid" alt="AWS Kubernetes" src="resources/images/kubernetes.svg" /> <br>
                     <span class="badge badge-primary">AWS Kubernetes</span>
@@ -105,6 +111,12 @@
                 <a href="/gcp/firestore" class="service-tile">
                     <img class="img-fluid" alt="Firestore" src="resources/images/firestore.svg" /> <br>
                     <span class="badge badge-primary">Firestore</span>
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-4 col-6">
+                <a href="/gcp/secret-manager" class="service-tile">
+                    <img class="img-fluid" alt="GCP Secret Manager" src="resources/images/secrets.svg" /> <br>
+                    <span class="badge badge-primary">Secret Manager</span>
                 </a>
             </div>
             <div class="col-lg-3 col-md-4 col-6">

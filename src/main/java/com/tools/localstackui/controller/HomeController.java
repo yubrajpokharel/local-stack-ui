@@ -29,6 +29,11 @@ public class HomeController {
     return "s3s";
   }
 
+  @RequestMapping(value = "/secrets-manager", method = GET)
+  public String secretsManager(Model model) {
+    return "secretsManager";
+  }
+
   @RequestMapping(value = "/redis", method = GET)
   public String redis(Model model) {
     return "redis";
@@ -123,6 +128,11 @@ public class HomeController {
   @RequestMapping(value = "/gcp/firestore", method = GET)
   public String gcpFirestore(Model model) {
     return "gcpFirestore";
+  }
+
+  @RequestMapping(value = "/gcp/secret-manager", method = GET)
+  public String gcpSecretManager(Model model) {
+    return "gcpSecretManager";
   }
 
 }

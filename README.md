@@ -53,6 +53,7 @@ curl http://localhost:8085/rabbitmq/status
 curl http://localhost:8085/gcp/pubsub/status
 curl http://localhost:8085/gcp/storage/status
 curl http://localhost:8085/gcp/firestore/status
+curl http://localhost:8085/gcp/secret-manager/status
 ```
 
 ## UI Pages
@@ -61,6 +62,7 @@ curl http://localhost:8085/gcp/firestore/status
 /             service dashboard
 /messaging    SNS and SQS management
 /s3           S3 bucket management
+/secrets-manager AWS Secrets Manager secret viewer
 /redis        Redis key/value viewer
 /mongodb      MongoDB status and database viewer
 /kafka        Kafka status and topic viewer
@@ -68,6 +70,7 @@ curl http://localhost:8085/gcp/firestore/status
 /gcp/pubsub   GCP Pub/Sub emulator
 /gcp/storage  GCP Cloud Storage emulator
 /gcp/firestore GCP Firestore emulator
+/gcp/secret-manager GCP Secret Manager local store
 /mock-http    configurable mock HTTP services
 ```
 
@@ -116,6 +119,7 @@ gcp.firestore.port=8787
 gcp.firestore.endpoint=http://localhost:8787
 gcp.firestore.docker.service=gcp-firestore
 gcp.firestore.auth.token=owner
+gcp.secretmanager.data.file=./volume/gcp-secret-manager/secrets.json
 mock.servers=
 ```
 
@@ -288,6 +292,60 @@ Delete a bucket:
 
 ```bash
 curl -X POST http://localhost:8085/s3-buckets/delete/demo-bucket
+```
+
+## Secrets Manager Examples
+
+You can manage AWS Secrets Manager from:
+
+```text
+http://localhost:8085/secrets-manager
+```
+
+Create a secret:
+
+```bash
+curl -X POST \
+  -H "Content-Type: text/plain" \
+  --data "local-password" \
+  "http://localhost:8085/secrets-manager/secrets?secretName=dev/db/password&description=Local%20dev%20database%20password"
+```
+
+List secrets with ARN and created time:
+
+```bash
+curl http://localhost:8085/secrets-manager/secrets
+```
+
+Read a secret value:
+
+```bash
+curl "http://localhost:8085/secrets-manager/secrets/value?secretId=dev/db/password"
+```
+
+Update a secret value:
+
+```bash
+curl -X PUT \
+  -H "Content-Type: text/plain" \
+  --data "new-local-password" \
+  "http://localhost:8085/secrets-manager/secrets/value?secretId=dev/db/password"
+```
+
+Delete a secret:
+
+```bash
+curl -X DELETE "http://localhost:8085/secrets-manager/secrets?secretId=dev/db/password"
+```
+
+Equivalent LocalStack CLI commands:
+
+```bash
+awslocal secretsmanager create-secret --name dev/db/password --secret-string local-password
+awslocal secretsmanager list-secrets
+awslocal secretsmanager get-secret-value --secret-id dev/db/password
+awslocal secretsmanager put-secret-value --secret-id dev/db/password --secret-string new-local-password
+awslocal secretsmanager delete-secret --secret-id dev/db/password --force-delete-without-recovery
 ```
 
 ## Redis Examples
@@ -470,6 +528,7 @@ You can manage GCP emulators from:
 http://localhost:8085/gcp/pubsub
 http://localhost:8085/gcp/storage
 http://localhost:8085/gcp/firestore
+http://localhost:8085/gcp/secret-manager
 ```
 
 Start Pub/Sub, Cloud Storage, and Firestore through the app:
@@ -478,6 +537,12 @@ Start Pub/Sub, Cloud Storage, and Firestore through the app:
 curl -X POST http://localhost:8085/gcp/pubsub/start
 curl -X POST http://localhost:8085/gcp/storage/start
 curl -X POST http://localhost:8085/gcp/firestore/start
+```
+
+Check GCP Secret Manager local store status:
+
+```bash
+curl http://localhost:8085/gcp/secret-manager/status
 ```
 
 Create a Pub/Sub topic and subscription:
@@ -495,6 +560,52 @@ curl -X POST \
   -H "Content-Type: text/plain" \
   --data "hello from pubsub" \
   http://localhost:8085/gcp/pubsub/topics/orders-created/publish
+```
+
+Create a GCP Secret Manager secret:
+
+```bash
+curl -X POST \
+  -H "Content-Type: text/plain" \
+  --data "local-password" \
+  "http://localhost:8085/gcp/secret-manager/secrets?secretId=db_password"
+```
+
+List GCP secrets:
+
+```bash
+curl http://localhost:8085/gcp/secret-manager/secrets
+```
+
+Read the latest secret version:
+
+```bash
+curl "http://localhost:8085/gcp/secret-manager/secrets/value?secretId=db_password"
+```
+
+Add a new secret version:
+
+```bash
+curl -X PUT \
+  -H "Content-Type: text/plain" \
+  --data "new-local-password" \
+  "http://localhost:8085/gcp/secret-manager/secrets/value?secretId=db_password"
+```
+
+Delete a GCP secret:
+
+```bash
+curl -X DELETE "http://localhost:8085/gcp/secret-manager/secrets?secretId=db_password"
+```
+
+Equivalent GCP CLI commands:
+
+```bash
+gcloud secrets create db_password --replication-policy=automatic --data-file=/path/to/value --project=localstack-ui
+gcloud secrets list --project=localstack-ui
+gcloud secrets versions access latest --secret=db_password --project=localstack-ui
+gcloud secrets versions add db_password --data-file=/path/to/value --project=localstack-ui
+gcloud secrets delete db_password --quiet --project=localstack-ui
 ```
 
 Create a Cloud Storage bucket and upload a text object:
@@ -608,7 +719,7 @@ mvn spring-boot:run \
 
 ## Troubleshooting
 
-If SNS, SQS, or S3 calls fail with `Connect to localhost:4566 failed`, LocalStack is not running or not exposed on port `4566`:
+If SNS, SQS, S3, or Secrets Manager calls fail with `Connect to localhost:4566 failed`, LocalStack is not running or not exposed on port `4566`:
 
 ```bash
 docker compose up -d localstack

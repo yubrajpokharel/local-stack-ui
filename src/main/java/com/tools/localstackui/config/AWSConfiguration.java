@@ -8,6 +8,8 @@ import com.amazonaws.http.apache.client.impl.SdkHttpClient;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.secretsmanager.AWSSecretsManager;
+import com.amazonaws.services.secretsmanager.AWSSecretsManagerClientBuilder;
 import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sns.AmazonSNSClientBuilder;
 import com.amazonaws.services.sqs.AmazonSQS;
@@ -58,6 +60,14 @@ public class AWSConfiguration {
             new EndpointConfiguration("http://s3."+region+".localhost.localstack.cloud:4566", region)
         )
         .withPathStyleAccessEnabled(true)
+        .build();
+  }
+
+  @Bean
+  public AWSSecretsManager awsSecretsManager() {
+    return AWSSecretsManagerClientBuilder.standard()
+        .withCredentials(new AWSStaticCredentialsProvider(awsCredentials()))
+        .withEndpointConfiguration(new EndpointConfiguration("http://localhost:4566", region))
         .build();
   }
 }
